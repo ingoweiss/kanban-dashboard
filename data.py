@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import json
 
+from config import Config as Conf
+
 class Data:
 
     @classmethod
@@ -22,3 +24,21 @@ class Data:
         stories['Burn Down'] = total_scope - stories['Burn Up']
 
         return stories
+
+    @classmethod
+    def story_days(cls):
+
+        stories = cls.stories()
+        timeline = pd.date_range(start=Conf.project_start_date, periods=Conf.project_duration)
+
+        story_days = []
+        for d in timeline:
+            story_days_d = stories[(stories['Start Date'] <= d) & ((stories['End Date'].isna()) | (stories['End Date'] >= d))].copy()
+            story_days_d['Date'] = d
+            story_days_d['Story Day'] = (d - story_days_d['Start Date']).dt.days + 1
+            story_days_d['Relative Story Day'] =  round(story_days_d['Story Day'] - (story_days_d['Size'] * 1.5))
+            story_days_d['Project Day'] = (d.date() - Conf.project_start_date).days + 1
+            story_days.append(story_days_d)
+
+        story_days = pd.concat(story_days, axis=0).reset_index()
+        return story_days
