@@ -17,7 +17,7 @@ class Graphs:
             x=green_days['Project Day'],
             y=green_days['Size'],
             base=green_days['Burn Down'],
-            marker=dict(color='green')
+            marker=dict(color='gray')
         ))
         orange_days = story_days[story_days['Relative Story Day'] == 0]
         fig.add_trace(go.Bar(
@@ -38,9 +38,15 @@ class Graphs:
             bargap=0,
             bargroupgap=0
         )
-        fig.update_xaxes(
-            scaleanchor='y',
-            scaleratio=1
+        fig.update_layout(
+            showlegend=False,
+            margin=dict(
+                l=0,
+                r=0,
+                b=0,
+                t=0,
+                pad=0
+            )
         )
         graph = dcc.Graph(
             id='burndown-chart',
