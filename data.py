@@ -18,6 +18,8 @@ class Data:
         project_start_date = pd.to_datetime('2020-03-12')
         stories['Start Day'] = (stories['Start Date'] - pd.to_datetime('2020-03-12')).dt.days
         stories['End Day'] = (stories['End Date'] - pd.to_datetime('2020-03-12')).dt.days
+        stories['Story Days (Estimated)'] = round(stories['Size'] * Conf.structuring_factor)
+        stories['End Date (Estimated)'] = stories['Start Date'] + pd.to_timedelta(stories['Story Days (Estimated)'], 'd')
         stories['In-Flight'] = stories['Start Date'].notna() & stories['End Date'].isna()
         stories['Cycle Time'] = (stories['End Date'] - stories['Start Date']).dt.days
         stories['Burn Up'] = stories['Size'].expanding().sum()
@@ -37,7 +39,7 @@ class Data:
             story_days_d = stories[(stories['Start Date'] <= d) & ((stories['End Date'].isna()) | (stories['End Date'] >= d))].copy()
             story_days_d['Date'] = d
             story_days_d['Story Day'] = (d - story_days_d['Start Date']).dt.days + 1
-            story_days_d['Relative Story Day'] =  round(story_days_d['Story Day'] - (story_days_d['Size'] * 1.5))
+            story_days_d['Completeness (Estimated)'] = story_days_d['Story Day'] / stories['Story Days (Estimated)']
             story_days_d['Project Day'] = (d.date() - Conf.project_start_date).days + 1
             story_days.append(story_days_d)
 

@@ -17,8 +17,11 @@ class Graphs:
             y=story_days['Size'],
             base=story_days['Burn Down'],
             marker=dict(
-                color=story_days['Relative Story Day'],
-                colorscale=['gray', 'orange', 'red']
+                color=story_days['Completeness (Estimated)'],
+                colorscale=['gray', 'orange', 'red'],
+                cmin=0.7,
+                cmid=1,
+                cmax=1.3
             )
         ))
         fig.update_layout(
