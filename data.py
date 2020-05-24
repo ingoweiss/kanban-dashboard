@@ -32,16 +32,17 @@ class Data:
     def story_days(cls):
 
         stories = cls.stories()
-        timeline = pd.date_range(start=Conf.project_start_date, end=datetime.today())
+        timeline = pd.date_range(start=Conf.project_start_date, end=stories['End Date (Estimated)'].max())
 
         story_days = []
         for d in timeline:
-            story_days_d = stories[(stories['Start Date'] <= d) & ((stories['End Date'].isna()) | (stories['End Date'] >= d))].copy()
+            story_days_d = stories[(stories['Start Date'] <= d) & ((stories['End Date'] >= d) | (stories['End Date (Estimated)'] >= d))].copy()
             story_days_d['Date'] = d
             story_days_d['Story Day'] = (d - story_days_d['Start Date']).dt.days + 1
             story_days_d['Completeness (Estimated)'] = story_days_d['Story Day'] / stories['Story Days (Estimated)']
             story_days_d['Project Day'] = (d.date() - Conf.project_start_date).days + 1
+            story_days_d['Projected'] = d > datetime.today()
             story_days.append(story_days_d)
-
+        
         story_days = pd.concat(story_days, axis=0).reset_index()
         return story_days
