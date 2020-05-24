@@ -41,7 +41,7 @@ class Data:
             story_days_d['Story Day'] = (d - story_days_d['Start Date']).dt.days + 1
             story_days_d['Completeness (Estimated)'] = story_days_d['Story Day'] / stories['Story Days (Estimated)']
             story_days_d['Project Day'] = (d.date() - Conf.project_start_date).days + 1
-            story_days_d['Projected'] = d > datetime.today()
+            story_days_d['Projected'] = d >= datetime.today()
             story_days.append(story_days_d)
         
         story_days = pd.concat(story_days, axis=0).reset_index()

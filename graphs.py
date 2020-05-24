@@ -1,3 +1,5 @@
+from datetime import date
+
 import plotly.graph_objects as go
 import dash
 import dash_core_components as dcc
@@ -5,6 +7,7 @@ import plotly.io as pio
 pio.templates.default = "plotly_white"
 
 from data import Data as Dat
+from config import Config as Conf
 
 class Graphs:
 
@@ -14,6 +17,8 @@ class Graphs:
         story_days = Dat.story_days()
         story_days_completed = story_days[story_days['Projected'] == False]
         story_days_projected = story_days[story_days['Projected'] == True]
+        today = date.today()
+        project_day = (today - Conf.project_start_date).days + 1
 
         fig = go.Figure()
         fig.add_trace(go.Bar(   
@@ -36,6 +41,16 @@ class Graphs:
                 color='lightgray'
             )
         ))
+        fig.add_shape(
+            type='line',
+            xref="x",
+            yref="y",
+            x0=project_day,
+            x1=project_day,
+            y0=story_days['Burn Down'].max(),
+            y1=0,
+            line=dict(width=1, color='gray', dash='dash')
+        )
         fig.update_layout(
             barmode='stack',
             bargap=0,
