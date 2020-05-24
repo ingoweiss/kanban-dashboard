@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import json
+from datetime import datetime
 
 from config import Config as Conf
 
@@ -29,7 +30,7 @@ class Data:
     def story_days(cls):
 
         stories = cls.stories()
-        timeline = pd.date_range(start=Conf.project_start_date, periods=Conf.project_duration)
+        timeline = pd.date_range(start=Conf.project_start_date, end=datetime.today())
 
         story_days = []
         for d in timeline:

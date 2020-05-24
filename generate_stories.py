@@ -35,8 +35,9 @@ with open('data/stories.json', 'w') as json_file:
     json.dump(stories, json_file, indent=2)
 
 config = dict(
-    project_start = project_start_date.strftime('%Y-%m-%d'),
-    project_duration = project_duration
+    project_start_date = project_start_date.strftime('%Y-%m-%d'),
+    project_duration = project_duration,
+    structuring = 0.2
 )
 with open('data/config.json', 'w') as json_file:
     json.dump(config, json_file, indent=2)
