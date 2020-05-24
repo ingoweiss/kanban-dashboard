@@ -66,6 +66,7 @@ class Graphs:
                 pad=0
             )
         )
+        fig.update_xaxes(range=[1, Conf.project_duration])
         graph = dcc.Graph(
             id='burndown-chart',
             figure=fig,
