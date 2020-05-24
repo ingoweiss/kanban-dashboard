@@ -12,26 +12,14 @@ class Graphs:
         story_days = Dat.story_days()
 
         fig = go.Figure()
-        green_days = story_days[story_days['Relative Story Day'] < 0]
-        fig.add_trace(go.Bar(
-            x=green_days['Project Day'],
-            y=green_days['Size'],
-            base=green_days['Burn Down'],
-            marker=dict(color='gray')
-        ))
-        orange_days = story_days[story_days['Relative Story Day'] == 0]
-        fig.add_trace(go.Bar(
-            x=orange_days['Project Day'],
-            y=orange_days['Size'],
-            base=orange_days['Burn Down'],
-            marker=dict(color='orange')
-        ))
-        red_days = story_days[story_days['Relative Story Day'] > 0]
-        fig.add_trace(go.Bar(
-            x=red_days['Project Day'],
-            y=red_days['Size'],
-            base=red_days['Burn Down'],
-            marker=dict(color='red')
+        fig.add_trace(go.Bar(   
+            x=story_days['Project Day'],
+            y=story_days['Size'],
+            base=story_days['Burn Down'],
+            marker=dict(
+                color=story_days['Relative Story Day'],
+                colorscale=['gray', 'orange', 'red']
+            )
         ))
         fig.update_layout(
             barmode='stack',
