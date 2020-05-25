@@ -16,15 +16,15 @@ class Data:
                     .sort_values(['End Date', 'Start Date'], ascending=[True, True])
 
         project_start_date = pd.to_datetime('2020-03-12')
-        stories['Start Day'] = (stories['Start Date'] - pd.to_datetime('2020-03-12')).dt.days
-        stories['End Day'] = (stories['End Date'] - pd.to_datetime('2020-03-12')).dt.days
-        stories['Story Days (Estimated)'] = round(stories['Size'] * Conf.structuring_factor)
+        stories['Start Day'] = (stories['Start Date'] - Conf.project_start_date).dt.days.astype('Int64')
+        stories['End Day'] = (stories['End Date'] - Conf.project_start_date).dt.days.astype('Int64')
+        stories['Story Days (Estimated)'] = round(stories['Size'] * Conf.structuring_factor).astype('Int64')
         stories['End Date (Estimated)'] = stories['Start Date'] + pd.to_timedelta(stories['Story Days (Estimated)'], 'd')
         stories['In-Flight'] = stories['Start Date'].notna() & stories['End Date'].isna()
-        stories['Cycle Time'] = (stories['End Date'] - stories['Start Date']).dt.days
-        stories['Burn Up'] = stories['Size'].expanding().sum()
+        stories['Cycle Time'] = (stories['End Date'] - stories['Start Date']).dt.days.astype('Int64')
+        stories['Burn Up'] = stories['Size'].expanding().sum().astype('Int64')
         total_scope = stories['Size'].values.sum()
-        stories['Burn Down'] = total_scope - stories['Burn Up']
+        stories['Burn Down'] = (total_scope - stories['Burn Up']).astype('Int64')
 
         return stories
 
