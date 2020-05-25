@@ -15,30 +15,21 @@ class Graphs:
     def burndown_chart(cls):
 
         story_days = Dat.story_days()
-        story_days_completed = story_days[story_days['Projected'] == False]
-        story_days_projected = story_days[story_days['Projected'] == True]
         today = date.today()
         project_day = (today - Conf.project_start_date).days + 1
 
         fig = go.Figure()
         fig.add_trace(go.Bar(   
-            x=story_days_completed['Project Day'],
-            y=story_days_completed['Size'],
-            base=story_days_completed['Burn Down'],
+            x=story_days['Project Day'],
+            y=story_days['Size'],
+            base=story_days['Burn Down'],
             marker=dict(
-                color=story_days_completed['Completeness (Estimated)'],
+                color=story_days['Completeness (Estimated)'],
                 colorscale=['gray', 'orange', 'red'],
                 cmin=0.7,
                 cmid=1,
-                cmax=1.3
-            )
-        ))
-        fig.add_trace(go.Bar(   
-            x=story_days_projected['Project Day'],
-            y=story_days_projected['Size'],
-            base=story_days_projected['Burn Down'],
-            marker=dict(
-                color='lightgray'
+                cmax=1.3,
+                opacity=story_days['Projected'].map({True: 0.2, False: 1.0})
             )
         ))
         fig.add_shape(
