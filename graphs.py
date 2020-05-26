@@ -1,5 +1,4 @@
-from datetime import date
-
+import pandas as pd
 import plotly.graph_objects as go
 import dash
 import dash_core_components as dcc
@@ -15,8 +14,8 @@ class Graphs:
     def burndown_chart(cls):
 
         story_days = Dat.story_days()
-        today = date.today()
-        project_day = (today - Conf.project_start_date).days + 1
+        project_day = (pd.to_datetime('today') - Conf.project_start_date).days + 1
+        projected = story_days['Project Day'] > project_day
 
         fig = go.Figure()
         fig.add_trace(go.Bar(   
@@ -29,7 +28,7 @@ class Graphs:
                 cmin=0.7,
                 cmid=1,
                 cmax=1.3,
-                opacity=story_days['Projected'].map({True: 0.2, False: 1.0})
+                opacity=projected.map({True: 0.2, False: 1.0})
             )
         ))
         fig.add_shape(
