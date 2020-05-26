@@ -1,3 +1,4 @@
+import pdb
 import pandas as pd
 import numpy as np
 import json
@@ -21,7 +22,7 @@ class Data:
         stories['Start Project Day'] = (stories['Start Date'] - Conf.project_start_date).dt.days.astype('Int64')
         stories['End Project Day (Actual)'] = (stories['End Date (Actual)'] - Conf.project_start_date).dt.days.astype('Int64')
         stories['Story Days (Estimated)'] = round(stories['Size'] * Conf.structuring_factor).astype('Int64')
-        stories['End Project Day (Estimated)'] = stories['Start Project Day'] + stories['Story Days (Estimated)']
+        stories['End Project Day (Estimated)'] = stories['Start Project Day'] + stories['Story Days (Estimated)'] - 1
         stories['End Date (Estimated)'] = stories['Start Date'] + pd.to_timedelta(stories['Story Days (Estimated)'], 'd')
         stories['In-Flight'] = stories['Start Date'].notna() & stories['End Date (Actual)'].isna()
         stories['Story Days (Actual)'] = (stories['End Date (Actual)'] - stories['Start Date']).dt.days.astype('Int64')
@@ -41,14 +42,15 @@ class Data:
 
         stories = cls.stories()
 
-        # fill in elapsed days since estimated end for overdue stories:
+        # determine elapsed days since estimated end for overdue stories:
         project_day = (pd.to_datetime('today') - Conf.project_start_date).days + 1
         overdue = stories['In-Flight'] & (stories['End Project Day (Estimated)'] < project_day)
-        stories.loc[overdue, 'Story Days (Actual or Estimated)'] += project_day - stories.loc[overdue, 'End Project Day (Estimated)']
-        
+        stories.loc[overdue, 'Overdue Days'] = project_day - stories.loc[overdue, 'End Project Day (Estimated)']
+        stories['Overdue Days'] = stories['Overdue Days'].astype('Int64') # FIXME this works only if I cast to int in a separate step, otherwise it ends up a float column - why?
+
         # determine and explode story days of all started stories:
-        started = stories['Start Project Day'].notna()
-        stories.loc[started, 'Story Days'] = stories[started]['Story Days (Actual or Estimated)'].apply(range)
+        started = stories['Start Date'].notna()
+        stories.loc[started, 'Story Days'] = (stories.loc[started, 'Story Days (Actual or Estimated)'] + stories.loc[started, 'Overdue Days'].fillna(0)).apply(range)
         story_days = stories[started].explode('Story Days').rename(columns={'Story Days': 'Story Day'})
 
         # populate story day specific fields:
