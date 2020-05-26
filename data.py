@@ -15,7 +15,6 @@ class Data:
                     .set_index('ID')\
                     .sort_values(['End Date (Actual)', 'Start Date'], ascending=[True, True])
 
-        project_start_date = pd.to_datetime('2020-03-12')
         completed = stories['End Date (Actual)'].notna()
         started = stories['Start Date'].notna()
 
@@ -41,9 +40,18 @@ class Data:
     def story_days(cls):
 
         stories = cls.stories()
+
+        # fill in elapsed days since estimated end for overdue stories:
+        project_day = (pd.to_datetime('today') - Conf.project_start_date).days + 1
+        overdue = stories['In-Flight'] & (stories['End Project Day (Estimated)'] < project_day)
+        stories.loc[overdue, 'Story Days (Actual or Estimated)'] += project_day - stories.loc[overdue, 'End Project Day (Estimated)']
+        
+        # determine and explode story days of all started stories:
         started = stories['Start Project Day'].notna()
         stories.loc[started, 'Story Days'] = stories[started]['Story Days (Actual or Estimated)'].apply(range)
         story_days = stories[started].explode('Story Days').rename(columns={'Story Days': 'Story Day'})
+
+        # populate story day specific fields:
         story_days['Story Day'] = story_days['Story Day'].astype('Int64') + 1
         story_days['Project Day'] = story_days['Start Project Day'] + story_days['Story Day'] - 1
         story_days['Completeness (Estimated)'] = story_days['Story Day'] / story_days['Story Days (Estimated)']
