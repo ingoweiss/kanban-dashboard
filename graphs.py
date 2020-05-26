@@ -21,7 +21,7 @@ class Graphs:
         fig.add_trace(go.Bar(   
             x=story_days['Project Day'],
             y=story_days['Size'],
-            base=story_days['Burn Down'],
+            base=story_days['Burn Down (Actual or Estimated)'],
             marker=dict(
                 color=story_days['Completeness (Estimated)'],
                 colorscale=['gray', 'orange', 'red'],
@@ -37,7 +37,7 @@ class Graphs:
             yref="y",
             x0=project_day,
             x1=project_day,
-            y0=story_days['Burn Down'].max(),
+            y0=story_days['Burn Down (Actual or Estimated)'].max(),
             y1=0,
             line=dict(width=1, color='gray', dash='dash')
         )

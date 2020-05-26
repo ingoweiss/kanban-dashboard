@@ -16,6 +16,9 @@ class Data:
                     .sort_values(['End Date (Actual)', 'Start Date'], ascending=[True, True])
 
         project_start_date = pd.to_datetime('2020-03-12')
+        completed = stories['End Date (Actual)'].notna()
+        started = stories['Start Date'].notna()
+
         stories['Start Project Day'] = (stories['Start Date'] - Conf.project_start_date).dt.days.astype('Int64')
         stories['End Project Day (Actual)'] = (stories['End Date (Actual)'] - Conf.project_start_date).dt.days.astype('Int64')
         stories['Story Days (Estimated)'] = round(stories['Size'] * Conf.structuring_factor).astype('Int64')
@@ -23,10 +26,14 @@ class Data:
         stories['End Date (Estimated)'] = stories['Start Date'] + pd.to_timedelta(stories['Story Days (Estimated)'], 'd')
         stories['In-Flight'] = stories['Start Date'].notna() & stories['End Date (Actual)'].isna()
         stories['Story Days (Actual)'] = (stories['End Date (Actual)'] - stories['Start Date']).dt.days.astype('Int64')
-        completed = stories['End Date (Actual)'].notna()
-        stories.loc[completed, 'Burn Up'] = stories.loc[completed, 'Size'].expanding().sum().astype('Int64')
+        stories['Story Days (Actual or Estimated)'] = stories['Story Days (Actual)'].combine_first(stories['Story Days (Estimated)'])
+        stories.loc[completed, 'Burn Up (Actual)'] = stories.loc[completed, 'Size'].expanding().sum().astype('Int64')
+        stories.loc[started, 'Burn Up (Estimated)'] = stories.loc[started, 'Size'].expanding().sum().astype('Int64')
+        stories['Burn Up (Actual or Estimated)'] = stories['Burn Up (Actual)'].combine_first(stories['Burn Up (Estimated)'])
         total_scope = stories['Size'].values.sum()
-        stories.loc[completed, 'Burn Down'] = (total_scope - stories[completed]['Burn Up']).astype('Int64')
+        stories.loc[completed, 'Burn Down (Actual)'] = (total_scope - stories.loc[completed, 'Burn Up (Actual)']).astype('Int64')
+        stories.loc[started, 'Burn Down (Estimated)'] = (total_scope - stories.loc[started, 'Burn Up (Estimated)']).astype('Int64')
+        stories['Burn Down (Actual or Estimated)'] = stories['Burn Down (Actual)'].combine_first(stories['Burn Down (Estimated)'])
 
         return stories
 
@@ -34,8 +41,6 @@ class Data:
     def story_days(cls):
 
         stories = cls.stories()
-
-        stories['Story Days (Actual or Estimated)'] = stories['Story Days (Actual)'].combine_first(stories['Story Days (Estimated)'])
         started = stories['Start Project Day'].notna()
         stories.loc[started, 'Story Days'] = stories[started]['Story Days (Actual or Estimated)'].apply(range)
         story_days = stories[started].explode('Story Days').rename(columns={'Story Days': 'Story Day'})
