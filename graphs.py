@@ -16,8 +16,21 @@ class Graphs:
         story_days = Dat.story_days()
         project_day = (pd.to_datetime('today') - Conf.project_start_date).days + 1
         projected = story_days['Project Day'] > project_day
+        total_scope = story_days['Burn Down (Actual or Estimated)'].max()
 
         fig = go.Figure()
+
+        
+        holidays = [(d - Conf.project_start_date).days+1 for d in Conf.project_dates if d not in Conf.project_working_dates]
+        fig.add_trace(go.Bar(   
+            x=holidays,
+            y=[total_scope]*len(holidays),
+            marker=dict(
+                color='gray',  
+            ),
+            opacity=0.1
+        ))
+
         fig.add_trace(go.Bar(   
             x=story_days['Project Day'],
             y=story_days['Size'],
@@ -29,7 +42,8 @@ class Graphs:
                 cmid=1,
                 cmax=1.3,
                 opacity=projected.map({True: 0.2, False: 1.0})
-            )
+            ),
+            hovertemplate="Story: {}"
         ))
         fig.add_shape(
             type='line',
