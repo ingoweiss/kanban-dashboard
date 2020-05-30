@@ -36,11 +36,12 @@ class Graphs:
             y=story_days['Size'],
             base=story_days['Burn Down (Actual or Estimated)'],
             marker=dict(
-                color=story_days['Completeness (Estimated)'],
-                colorscale=['gray', 'orange', 'red'],
-                cmin=0.7,
-                cmid=1,
-                cmax=1.3,
+                # color=story_days['Completeness (Estimated)'],
+                color='gray',
+                # colorscale=['gray', 'orange', 'red'],
+                # cmin=0.7,
+                # cmid=1,
+                # cmax=1.3,
                 opacity=projected.map({True: 0.2, False: 1.0})
             ),
             hovertemplate="Story: {}"
