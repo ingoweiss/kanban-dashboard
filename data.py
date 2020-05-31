@@ -22,6 +22,7 @@ class Data:
         started = stories['Start Date'].notna()
 
         stories['Start Project Day'] = (stories['Start Date'] - conf.project_start_date).dt.days.astype('Int64')
+        stories['Start Project Working Day'] = stories.apply(lambda s: conf.project_working_days.index(s['Start Project Day'])+1, axis=1)
         stories['End Project Day (Actual)'] = (stories['End Date (Actual)'] - conf.project_start_date).dt.days.astype('Int64')
         stories['Story Days (Estimated)'] = round(stories['Size'] * conf.structuring_factor).astype('Int64')
         stories['End Project Day (Estimated)'] = stories['Start Project Day'] + stories['Story Days (Estimated)'] - 1
@@ -38,6 +39,12 @@ class Data:
         stories.loc[started, 'Burn Down (Estimated)'] = (total_scope - stories['Burn Up (Estimated)'])#.astype('Int64')
         stories['Burn Down (Actual or Estimated)'] = stories['Burn Down (Actual)'].combine_first(stories['Burn Down (Estimated)'])
 
+        # determine elapsed days since estimated end for overdue stories:
+        project_day = (pd.to_datetime('today') - conf.project_start_date).days + 1
+        overdue = stories['In-Flight'] & (stories['End Project Day (Estimated)'] < project_day)
+        stories.loc[overdue, 'Overdue Days'] = project_day - stories.loc[overdue, 'End Project Day (Estimated)']
+        stories['Overdue Days'] = stories['Overdue Days'].astype('Int64') # FIXME this works only if I cast to int in a separate step, otherwise it ends up a float column - why?
+
         return stories
 
     @classmethod
@@ -47,20 +54,17 @@ class Data:
 
         stories = cls.stories()
 
-        # determine elapsed days since estimated end for overdue stories:
-        project_day = (pd.to_datetime('today') - conf.project_start_date).days + 1
-        overdue = stories['In-Flight'] & (stories['End Project Day (Estimated)'] < project_day)
-        stories.loc[overdue, 'Overdue Days'] = project_day - stories.loc[overdue, 'End Project Day (Estimated)']
-        stories['Overdue Days'] = stories['Overdue Days'].astype('Int64') # FIXME this works only if I cast to int in a separate step, otherwise it ends up a float column - why?
+        
 
         # determine and explode story days of all started stories:
         started = stories['Start Date'].notna()
-        project_working_days = [(d - conf.project_start_date).days +1 for d in conf.project_working_dates]
-        stories.loc[started, 'Project Days'] = stories.apply(lambda s: [d for d in range(s['Start Project Day'], s['End Project Day (Actual or Estimated)']+1) if d in project_working_days], axis=1)
-        story_days = stories[started].explode('Project Days').rename(columns={'Project Days': 'Project Day'})
+        stories.loc[started, 'Story Days'] = stories.apply(lambda s: range(1, s['Story Days (Actual or Estimated)']+1), axis=1)
+        story_days = stories[started].explode('Story Days').rename(columns={'Story Days': 'Story Day'})
+        story_days['Story Day'] = story_days['Story Day'].astype('Int64')
 
         # populate story day specific fields:
-        # story_days['Completeness (Estimated)'] = story_days['Story Day'] / story_days['Story Days (Estimated)']
+        story_days['Project Day'] = story_days.apply(lambda s: conf.project_working_days[s['Start Project Working Day']-1+s['Story Day']-1], axis=1)
+        story_days.loc[started, 'Completeness (Estimated)'] = story_days['Story Day'] / story_days['Story Days (Estimated)']
 
         return story_days
 

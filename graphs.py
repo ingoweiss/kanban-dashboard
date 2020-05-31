@@ -6,22 +6,22 @@ import plotly.io as pio
 pio.templates.default = "plotly_white"
 
 from data import Data as Dat
-from config import Config as Conf
+from config import Config
 
 class Graphs:
 
     @classmethod
     def burndown_chart(cls):
 
+        conf = Config.instance()
         story_days = Dat.story_days()
-        project_day = (pd.to_datetime('today') - Conf.project_start_date).days + 1
+        project_day = (pd.to_datetime('today') - conf.project_start_date).days + 1
         projected = story_days['Project Day'] > project_day
         total_scope = story_days['Burn Down (Actual or Estimated)'].max()
 
         fig = go.Figure()
 
-        
-        holidays = [(d - Conf.project_start_date).days+1 for d in Conf.project_dates if d not in Conf.project_working_dates]
+        holidays = [(d - conf.project_start_date).days+1 for d in conf.project_dates if d not in conf.project_working_dates]
         fig.add_trace(go.Bar(   
             x=holidays,
             y=[total_scope]*len(holidays),
@@ -36,12 +36,11 @@ class Graphs:
             y=story_days['Size'],
             base=story_days['Burn Down (Actual or Estimated)'],
             marker=dict(
-                # color=story_days['Completeness (Estimated)'],
-                color='gray',
-                # colorscale=['gray', 'orange', 'red'],
-                # cmin=0.7,
-                # cmid=1,
-                # cmax=1.3,
+                color=story_days['Completeness (Estimated)'],
+                colorscale=['gray', 'orange', 'red'],
+                cmin=0.7,
+                cmid=1,
+                cmax=1.3,
                 opacity=projected.map({True: 0.2, False: 1.0})
             ),
             hovertemplate="Story: {}"
@@ -71,7 +70,7 @@ class Graphs:
                 pad=0
             )
         )
-        fig.update_xaxes(range=[1, Conf.project_duration])
+        fig.update_xaxes(range=[1, conf.project_duration])
         graph = dcc.Graph(
             id='burndown-chart',
             figure=fig,
