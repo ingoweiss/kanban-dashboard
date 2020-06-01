@@ -21,7 +21,7 @@ class Data:
         completed = stories['End Date (Actual)'].notna()
         started = stories['Start Date'].notna()
 
-        stories['Start Project Day'] = (stories['Start Date'] - conf.project_start_date).dt.days.astype('Int64')
+        stories['Start Project Day'] = (stories['Start Date'] - conf.project_start_date).dt.days.astype('Int64') + 1
         stories['Start Project Working Day'] = stories.apply(lambda s: conf.project_working_days.index(s['Start Project Day'])+1, axis=1)
         stories['End Project Day (Actual)'] = (stories['End Date (Actual)'] - conf.project_start_date).dt.days.astype('Int64')
         stories['Story Days (Estimated)'] = round(stories['Size'] * conf.structuring_factor).astype('Int64')
@@ -54,8 +54,6 @@ class Data:
 
         stories = cls.stories()
 
-        
-
         # determine and explode story days of all started stories:
         started = stories['Start Date'].notna()
         stories.loc[started, 'Story Days'] = stories.apply(lambda s: range(1, s['Story Days (Actual or Estimated)']+1), axis=1)
@@ -64,6 +62,7 @@ class Data:
 
         # populate story day specific fields:
         story_days['Project Day'] = story_days.apply(lambda s: conf.project_working_days[s['Start Project Working Day']-1+s['Story Day']-1], axis=1)
+        story_days['Date'] = conf.project_start_date + pd.to_timedelta(story_days['Project Day']-1, unit='d')
         story_days.loc[started, 'Completeness (Estimated)'] = story_days['Story Day'] / story_days['Story Days (Estimated)']
 
         return story_days

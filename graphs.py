@@ -21,18 +21,17 @@ class Graphs:
 
         fig = go.Figure()
 
-        holidays = [(d - conf.project_start_date).days+1 for d in conf.project_dates if d not in conf.project_working_dates]
-        fig.add_trace(go.Bar(   
-            x=holidays,
-            y=[total_scope]*len(holidays),
-            marker=dict(
-                color='gray',  
-            ),
-            opacity=0.1
-        ))
+        # fig.add_trace(go.Bar(   
+        #     x=conf.project_nonworking_dates,
+        #     y=[total_scope]*len(conf.project_nonworking_dates),
+        #     marker=dict(
+        #         color='gray',  
+        #     ),
+        #     opacity=0.06
+        # ))
 
         fig.add_trace(go.Bar(   
-            x=story_days['Project Day'],
+            x=story_days['Date'],
             y=story_days['Size'],
             base=story_days['Burn Down (Actual or Estimated)'],
             marker=dict(
@@ -53,7 +52,7 @@ class Graphs:
             x1=project_day,
             y0=story_days['Burn Down (Actual or Estimated)'].max(),
             y1=0,
-            line=dict(width=1, color='gray', dash='dash')
+            line=dict(width=1, color='red', dash='dash')
         )
         fig.update_layout(
             barmode='stack',
@@ -70,7 +69,12 @@ class Graphs:
                 pad=0
             )
         )
-        fig.update_xaxes(range=[1, conf.project_duration])
+        fig.update_xaxes(
+            range=[conf.project_start_date, conf.project_end_date],
+            rangebreaks=[
+                dict(values=conf.project_nonworking_dates)
+            ]
+        )
         graph = dcc.Graph(
             id='burndown-chart',
             figure=fig,
