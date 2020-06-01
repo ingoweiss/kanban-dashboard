@@ -47,7 +47,7 @@ class Data:
 
         # determine and explode story days of all started stories:
         started = stories['Start Date'].notna()
-        stories.loc[started, 'Story Days'] = stories.loc[started, 'Story Days (Estimated)'].combine_first(stories.loc[started, ['Story Days (Estimated)', 'Story Days (Elapsed)']].max(axis=1)).apply(range)
+        stories.loc[started, 'Story Days'] = stories.loc[started, 'Story Days (Actual)'].combine_first(stories.loc[started, ['Story Days (Estimated)', 'Story Days (Elapsed)']].max(axis=1)).apply(range)
         story_days = stories.loc[started].explode('Story Days').rename(columns={'Story Days': 'Story Day'})
 
         # populate story day specific fields:
