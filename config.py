@@ -6,11 +6,13 @@ import pdb
 class Config:
 
     _instance = None
+    _data_dir = 'data'
 
     def __init__(self):
-        with open('data/config.json') as json_file:
+        with open(Config._data_dir + '/config.json') as json_file:
             self._data = json.load(json_file)
         self.calendar = USFederalHolidayCalendar()
+        self.offset = pd.offsets.CDay(calendar=self.calendar)
         self.project_start_date = pd.to_datetime(self._data['project_start_date'])
         self.project_duration = self._data['project_duration']
         self.project_end_date = self.project_start_date + pd.Timedelta(days=self.project_duration-1)

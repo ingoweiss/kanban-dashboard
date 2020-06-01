@@ -15,8 +15,8 @@ class Graphs:
 
         conf = Config.instance()
         story_days = Dat.story_days()
-        project_day = (pd.to_datetime('today') - conf.project_start_date).days + 1
-        projected = story_days['Project Day'] > project_day
+        today = pd.to_datetime('today')
+        projected = story_days['Date'] > today
         total_scope = story_days['Burn Down (Actual or Estimated)'].max()
 
         fig = go.Figure()
@@ -29,14 +29,13 @@ class Graphs:
         #     ),
         #     opacity=0.06
         # ))
-
         fig.add_trace(go.Bar(   
             x=story_days['Date'],
             y=story_days['Size'],
             base=story_days['Burn Down (Actual or Estimated)'],
             marker=dict(
                 color=story_days['Completeness (Estimated)'],
-                colorscale=['gray', 'orange', 'red'],
+                colorscale=['lightgray', 'orange', 'red'],
                 cmin=0.7,
                 cmid=1,
                 cmax=1.3,
@@ -48,11 +47,11 @@ class Graphs:
             type='line',
             xref="x",
             yref="y",
-            x0=project_day,
-            x1=project_day,
-            y0=story_days['Burn Down (Actual or Estimated)'].max(),
+            x0=today,
+            x1=today,
+            y0=total_scope,
             y1=0,
-            line=dict(width=1, color='red', dash='dash')
+            line=dict(width=1, color='lightgray', dash='dash')
         )
         fig.update_layout(
             barmode='stack',
