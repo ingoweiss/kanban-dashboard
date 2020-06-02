@@ -18,6 +18,7 @@ class Graphs:
         today = pd.to_datetime('today')
         projected = story_days['Date'] > today
         total_scope = story_days['Burn Down (Actual or Estimated)'].max()
+        hover_columns = ['ID', 'Story Days (Estimated)']
 
         fig = go.Figure()
 
@@ -41,8 +42,8 @@ class Graphs:
                 cmax=1.2,
                 opacity=projected.map({True: 0.2, False: 1.0})
             ),
-            customdata=story_days[['ID']],
-            hovertemplate='%{customdata[0]}',
+            customdata=story_days[story_days.columns],
+            hovertemplate='<br>'.join(["{}: %{{customdata[{}]}}".format(c, str(i)) for i,c in enumerate(story_days.columns)]),
         ))
         fig.add_shape(
             type='line',

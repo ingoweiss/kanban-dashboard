@@ -52,7 +52,7 @@ class Data:
 
         # populate story day specific fields:
         story_days['Date'] = story_days.apply(lambda s: s['Start Date'] + pd.offsets.CDay(calendar=conf.calendar, n=s['Story Day']), axis=1)
-        story_days['Completeness (Estimated)'] = (story_days['Story Day']+1).astype('float64') / story_days['Story Days (Estimated)'].astype('float64')
+        story_days['Completeness (Estimated)'] = ((story_days['Story Day']+1).astype('float64') / story_days['Story Days (Estimated)'].astype('float64')).round(2)
 
         return story_days
 
