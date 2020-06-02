@@ -14,7 +14,7 @@ class Graphs:
     def burndown_chart(cls):
 
         conf = Config.instance()
-        story_days = Dat.story_days()
+        story_days = Dat.story_days().reset_index()
         today = pd.to_datetime('today')
         projected = story_days['Date'] > today
         total_scope = story_days['Burn Down (Actual or Estimated)'].max()
@@ -35,13 +35,14 @@ class Graphs:
             base=story_days['Burn Down (Actual or Estimated)'],
             marker=dict(
                 color=story_days['Completeness (Estimated)'],
-                colorscale=['lightgray', 'orange', 'red'],
-                cmin=0.7,
+                colorscale=['lightgray', 'orange'],
+                cmin=0.8,
                 cmid=1,
-                cmax=1.3,
+                cmax=1.2,
                 opacity=projected.map({True: 0.2, False: 1.0})
             ),
-            hovertemplate="Story: {}"
+            customdata=story_days[['ID']],
+            hovertemplate='%{customdata[0]}',
         ))
         fig.add_shape(
             type='line',
