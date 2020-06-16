@@ -83,3 +83,43 @@ class Graphs:
         )
         return graph
 
+
+    @classmethod
+    def throughput_chart(cls):
+
+        stories = Dat.stories()
+        stories_by_end_date = Dat.stories_by_end_date()
+
+        fig = go.Figure()
+        fig.add_trace(go.Bar(
+            name="Stories Completed",
+            x=stories['End Date (Actual)'],
+            y=stories['Size'],
+            marker=dict(
+                color=stories['Relative Cycle Time'],
+                colorscale=['lightgray', 'orange'],
+                cmin=0.8,
+                cmid=1,
+                cmax=1.2,
+            ),
+            showlegend=False
+        ))
+        for window in [3,7,14]:
+            name = '{}d MA Throughput'.format(str(window))
+            fig.add_trace(go.Scatter(
+                name=name,
+                x=stories_by_end_date.index,
+                y=stories_by_end_date[name]
+            ))
+        fig.update_layout(
+            barmode='stack',
+            bargap=0,
+            bargroupgap=0,
+            legend_orientation='h'
+        )
+        graph = dcc.Graph(
+            id='throughput-chart',
+            figure=fig,
+            config=dict(displayModeBar=False)
+        )
+        return graph

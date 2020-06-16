@@ -36,8 +36,20 @@ class Data:
         stories.loc[completed, 'Burn Down (Actual)'] = (total_scope - stories['Burn Up (Actual)'])#.astype('Int64')
         stories.loc[started, 'Burn Down (Estimated)'] = (total_scope - stories['Burn Up (Estimated)'])#.astype('Int64')
         stories['Burn Down (Actual or Estimated)'] = stories['Burn Down (Actual)'].combine_first(stories['Burn Down (Estimated)'])
+        stories.loc[completed, 'Relative Cycle Time'] = stories['Story Days (Actual)'] / stories['Story Days (Estimated)']
 
         return stories
+    
+    @classmethod
+    def stories_by_end_date(cls):
+
+        stories = cls.stories()
+        completed = stories['End Date (Actual)'].notna()
+        stories_by_end_date = stories.loc[completed].groupby('End Date (Actual)').sum()
+        for window in [3,7,14]:
+            stories_by_end_date['{}d MA Throughput'.format(str(window))] = stories_by_end_date['Size'].rolling(window).mean()
+        
+        return stories_by_end_date
 
     @classmethod
     def story_days(cls):
