@@ -25,7 +25,8 @@ class Graphs:
 
         fig = sp.make_subplots(
             rows=2, cols=1,
-            row_heights=[0.7, 0.3]
+            row_heights=[0.7, 0.3],
+            shared_xaxes=True
         )
 
         # Burndown:
