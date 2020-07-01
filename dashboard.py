@@ -19,14 +19,8 @@ app.layout = dbc.Container([
     dbc.Row(dbc.Col(html.H1('Kanban Dashboard'), md=12, className='mb-3')),
     dbc.Row([
         dbc.Col(dbc.Card([
-            dbc.CardHeader('Burndown'),
-            dbc.CardBody(Grph.burndown_chart())
-        ]), md=12, className='mb-3'),
-    ]),
-    dbc.Row([
-        dbc.Col(dbc.Card([
-            dbc.CardHeader('Throughput'),
-            dbc.CardBody(Grph.throughput_chart())
+            dbc.CardHeader('Timeline'),
+            dbc.CardBody(Grph.timeline())
         ]), md=12, className='mb-3'),
     ]),
 ], fluid=True)
