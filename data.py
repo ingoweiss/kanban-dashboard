@@ -63,12 +63,12 @@ class Data:
         return stories
     
     @classmethod
-    def stories_by_end_date(cls):
+    def stories_by_end_date(cls, ma_windows=[]):
 
         stories = cls.stories()
         completed = stories['End Date (Actual)'].notna()
         stories_by_end_date = stories.loc[completed].groupby('End Date (Actual)').sum()
-        for window in [3,7,14]:
+        for window in ma_windows:
             stories_by_end_date['{}d MA Throughput'.format(str(window))] = stories_by_end_date['Size'].rolling(window).mean()
         
         return stories_by_end_date

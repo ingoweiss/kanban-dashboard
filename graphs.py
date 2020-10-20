@@ -21,7 +21,8 @@ class Graphs:
         total_scope = story_days['Burn Down (Actual or Estimated)'].max()
         hover_columns = ['ID', 'Story Days (Estimated)']
         stories = Dat.stories()
-        stories_by_end_date = Dat.stories_by_end_date()
+        ma_windows = [3,7,14]
+        stories_by_end_date = Dat.stories_by_end_date(ma_windows)
 
         fig = sp.make_subplots(
             rows=2, cols=1,
@@ -70,7 +71,7 @@ class Graphs:
             ),
             showlegend=False
         ), row=2, col=1)
-        for window in [3,7,14]:
+        for window in ma_windows:
             name = '{}d MA Throughput'.format(str(window))
             fig.add_trace(go.Scatter(
                 name=name,
@@ -90,7 +91,8 @@ class Graphs:
                 b=0,
                 t=0,
                 pad=0
-            )
+            ),
+            height=1000
         )
         fig.update_xaxes(
             range=[conf.project_start_date, conf.project_end_date],
