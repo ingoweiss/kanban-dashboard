@@ -21,7 +21,7 @@ class Graphs:
         total_scope = story_days['Burn Down (Actual or Estimated)'].max()
         hover_columns = ['ID', 'Story Days (Estimated)']
         stories = Dat.stories()
-        ma_windows = [3,7,14]
+        ma_windows = [3,7,14,30]
         stories_by_end_date = Dat.stories_by_end_date(ma_windows)
 
         fig = sp.make_subplots(
@@ -73,10 +73,12 @@ class Graphs:
         ), row=2, col=1)
         for window in ma_windows:
             name = '{}d MA Throughput'.format(str(window))
+            active_trace_flag = (window == ma_windows[2])
             fig.add_trace(go.Scatter(
                 name=name,
                 x=stories_by_end_date.index,
-                y=stories_by_end_date[name]
+                y=stories_by_end_date[name],
+                visible=active_trace_flag
             ), row=2, col=1)
         fig.update_layout(
             barmode='stack',
@@ -93,6 +95,43 @@ class Graphs:
                 pad=0
             ),
             height=1000
+        )
+        fig.update_layout(
+            updatemenus=[
+                dict(
+                    type = "buttons",
+                    direction = "left",
+                    active=2,
+                    buttons=list([
+                        dict(
+                            args=[dict(visible=[True, True, True, False, False, False])],
+                            label="3 Days",
+                            method="update"
+                        ),
+                        dict(
+                            args=[dict(visible=[True, True,False, True, False, False])],
+                            label="7 Days",
+                            method="update"
+                        ),
+                        dict(
+                            args=[dict(visible=[True, True,False, False, True, False])],
+                            label="14 Days",
+                            method="update"
+                        ),
+                        dict(
+                            args=[dict(visible=[True, True,False, False, False, True])],
+                            label="30 Days",
+                            method="update"
+                        )
+                    ]),
+                    showactive=True,
+                    x=0.5,
+                    xanchor="right",
+                    y=0.3,
+                    yanchor="top",
+                    pad=dict(r=5, l=5)
+                )
+            ]
         )
         fig.update_xaxes(
             range=[conf.project_start_date, conf.project_end_date],
