@@ -1,6 +1,6 @@
 import json
 import pandas as pd
-from pandas.tseries.holiday import USFederalHolidayCalendar
+from project_calendar import ProjectCalendar
 import pdb
 
 class Config:
@@ -11,7 +11,7 @@ class Config:
     def __init__(self):
         with open(Config._data_dir + '/config.json') as json_file:
             self._data = json.load(json_file)
-        self.calendar = USFederalHolidayCalendar()
+        self.calendar = ProjectCalendar()
         self.offset = pd.offsets.CDay(calendar=self.calendar)
         self.project_start_date = pd.to_datetime(self._data['project_start_date'])
         self.project_duration = self._data['project_duration']
