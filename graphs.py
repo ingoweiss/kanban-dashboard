@@ -20,7 +20,7 @@ class Graphs:
         projected = story_days['Date'] > today
         total_scope = story_days['Burn Down (Actual or Estimated)'].max()
         hover_columns = ['ID', 'Story Days (Estimated)']
-        stories = Dat.stories()
+        stories = Dat.stories().reset_index()
         ma_windows = [3,7,14,30]
         stories_by_end_date = Dat.stories_by_end_date(ma_windows)
 
@@ -69,6 +69,8 @@ class Graphs:
                 cmid=1,
                 cmax=1.2,
             ),
+            customdata=stories[['ID', 'Summary', 'Size']],
+            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points",
             showlegend=False
         ), row=2, col=1)
         for window in ma_windows:
