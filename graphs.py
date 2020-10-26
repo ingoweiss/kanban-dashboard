@@ -44,7 +44,7 @@ class Graphs:
                 opacity=projected.map({True: 0.2, False: 1.0})
             ),
             customdata=story_days[['ID', 'Summary', 'Size', 'Date', 'Completeness (Estimated)']],
-            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%B %d}<br>%{customdata[4]:%} complete<extra></extra>",
+            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%b %d}<br>%{customdata[4]:%} complete<extra></extra>",
         ), row=1, col=1)
         fig.add_shape(
             type='line',
@@ -80,7 +80,11 @@ class Graphs:
                 name=name,
                 x=stories_by_end_date.index,
                 y=stories_by_end_date[name],
-                visible=active_trace_flag
+                visible=active_trace_flag,
+                marker=dict(
+                    color='mediumslateblue'
+                ),
+                hovertemplate="%{x|%b %d}: %{y} Points<extra></extra>",
             ), row=2, col=1)
         fig.update_layout(
             barmode='stack',
