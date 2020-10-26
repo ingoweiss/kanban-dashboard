@@ -43,8 +43,8 @@ class Graphs:
                 cmax=1.2,
                 opacity=projected.map({True: 0.2, False: 1.0})
             ),
-            customdata=story_days[story_days.columns],
-            hovertemplate='<br>'.join(["{}: %{{customdata[{}]}}".format(c, str(i)) for i,c in enumerate(story_days.columns)]),
+            customdata=story_days[['ID', 'Summary', 'Size', 'Date', 'Completeness (Estimated)']],
+            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%B %d}<br>%{customdata[4]:%} complete",
         ), row=1, col=1)
         fig.add_shape(
             type='line',
