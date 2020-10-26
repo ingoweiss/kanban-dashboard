@@ -44,7 +44,7 @@ class Graphs:
                 opacity=projected.map({True: 0.2, False: 1.0})
             ),
             customdata=story_days[['ID', 'Summary', 'Size', 'Date', 'Completeness (Estimated)']],
-            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%B %d}<br>%{customdata[4]:%} complete",
+            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%B %d}<br>%{customdata[4]:%} complete<extra></extra>",
         ), row=1, col=1)
         fig.add_shape(
             type='line',
@@ -70,7 +70,7 @@ class Graphs:
                 cmax=1.2,
             ),
             customdata=stories[['ID', 'Summary', 'Size']],
-            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points",
+            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<extra></extra>",
             showlegend=False
         ), row=2, col=1)
         for window in ma_windows:
