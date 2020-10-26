@@ -102,28 +102,7 @@ class Graphs:
                     type = "buttons",
                     direction = "left",
                     active=2,
-                    buttons=list([
-                        dict(
-                            args=[dict(visible=[True, True, True, False, False, False])],
-                            label="3 Days",
-                            method="update"
-                        ),
-                        dict(
-                            args=[dict(visible=[True, True,False, True, False, False])],
-                            label="7 Days",
-                            method="update"
-                        ),
-                        dict(
-                            args=[dict(visible=[True, True,False, False, True, False])],
-                            label="14 Days",
-                            method="update"
-                        ),
-                        dict(
-                            args=[dict(visible=[True, True,False, False, False, True])],
-                            label="30 Days",
-                            method="update"
-                        )
-                    ]),
+                    buttons=list([dict(args=[dict(visible=[True]*2+[w == v for w in ma_windows])], label="{} Days".format(v), method="update") for i,v in enumerate(ma_windows)]),
                     showactive=True,
                     x=0.5,
                     xanchor="right",
