@@ -81,8 +81,10 @@ class Graphs:
                 x=stories_by_end_date.index,
                 y=stories_by_end_date[name],
                 visible=active_trace_flag,
-                marker=dict(
-                    color='mediumslateblue'
+                mode='lines',
+                line=dict(
+                    color='mediumslateblue',
+                    shape='spline'
                 ),
                 hovertemplate="%{x|%b %d}: %{y} Points<extra></extra>",
             ), row=2, col=1)
