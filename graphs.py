@@ -84,7 +84,7 @@ class Graphs:
                 mode='lines',
                 line=dict(
                     color='mediumslateblue',
-                    shape='spline'
+                    # shape='spline'
                 ),
                 hovertemplate="%{x|%b %d}: %{y} Points<extra></extra>",
             ), row=2, col=1)
