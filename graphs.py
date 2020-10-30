@@ -120,12 +120,15 @@ class Graphs:
                 )
             ]
         )
-        fig.update_xaxes(
-            range=[conf.project_start_date, conf.project_end_date],
+        fig.update_xaxes(dict(
+            # range=[conf.project_start_date, conf.project_end_date],
             rangebreaks=[
                 dict(values=conf.project_nonworking_dates)
-            ]
-        )
+            ],
+            tick0=conf.project_start_date,
+            dtick=(7*24*60*60*1000),
+            ticks='outside'
+        ))
         graph = dcc.Graph(
             id='burndown-chart',
             figure=fig,
