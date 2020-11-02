@@ -78,7 +78,10 @@ class Data:
             stories_by_end_date['{}-Day Stories'.format(str(window))] = stories_by_end_date['Stories'].rolling(window).sum()
             stories_by_end_date['{}-Day Size'.format(str(window))] = stories_by_end_date['Size'].rolling(window).sum()
             stories_by_end_date['{}-Day Story Days (Actual)'.format(str(window))] = stories_by_end_date['Story Days (Actual)'].rolling(window).sum()
-        
+
+            stories_by_end_date['{}-Day MA Story Cycle Time'.format(str(window))] = stories_by_end_date['{}-Day Story Days (Actual)'.format(str(window))] / stories_by_end_date['{}-Day Stories'.format(str(window))]
+            stories_by_end_date['{}-Day MA Story Point Cycle Time'.format(str(window))] = stories_by_end_date['{}-Day Story Days (Actual)'.format(str(window))] / stories_by_end_date['{}-Day Size'.format(str(window))]
+
         return stories_by_end_date
 
     @classmethod
