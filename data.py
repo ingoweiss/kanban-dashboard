@@ -75,9 +75,9 @@ class Data:
                               .resample(Config.instance().offset, level=0)\
                               .sum()
         for window in ma_windows:
-            stories_by_end_date['{}d MA Stories'.format(str(window))] = stories_by_end_date['Stories'].rolling(window).sum()
-            stories_by_end_date['{}d MA Throughput'.format(str(window))] = stories_by_end_date['Size'].rolling(window).sum()
-            stories_by_end_date['{}d MA Story Days'.format(str(window))] = stories_by_end_date['Story Days (Actual)'].rolling(window).sum()
+            stories_by_end_date['{}-Day Stories'.format(str(window))] = stories_by_end_date['Stories'].rolling(window).sum()
+            stories_by_end_date['{}-Day Size'.format(str(window))] = stories_by_end_date['Size'].rolling(window).sum()
+            stories_by_end_date['{}-Day Story Days (Actual)'.format(str(window))] = stories_by_end_date['Story Days (Actual)'].rolling(window).sum()
         
         return stories_by_end_date
 

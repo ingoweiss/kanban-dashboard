@@ -74,7 +74,7 @@ class Graphs:
             showlegend=False
         ), row=2, col=1)
         for window in ma_windows:
-            name = '{}d MA Throughput'.format(str(window))
+            name = '{}-Day Size'.format(str(window))
             active_trace_flag = (window == ma_windows[2])
             fig.add_trace(go.Scatter(
                 name=name,
