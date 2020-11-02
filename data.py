@@ -66,15 +66,18 @@ class Data:
     def stories_by_end_date(cls, ma_windows=[]):
 
         stories = cls.stories()
+        stories['Stories'] = 1
         completed = stories['End Date (Actual)'].notna()
         stories_by_end_date = stories.loc[completed]\
                               .groupby('End Date (Actual)')\
                               .sum()\
-                              .loc[:, ['Size']]\
+                              .loc[:, ['Stories', 'Size', 'Story Days (Actual)']]\
                               .resample(Config.instance().offset, level=0)\
                               .sum()
         for window in ma_windows:
+            stories_by_end_date['{}d MA Stories'.format(str(window))] = stories_by_end_date['Stories'].rolling(window).sum()
             stories_by_end_date['{}d MA Throughput'.format(str(window))] = stories_by_end_date['Size'].rolling(window).sum()
+            stories_by_end_date['{}d MA Story Days'.format(str(window))] = stories_by_end_date['Story Days (Actual)'].rolling(window).sum()
         
         return stories_by_end_date
 
