@@ -21,7 +21,7 @@ class Graphs:
         total_scope = story_days['Burn Down (Actual or Estimated)'].max()
         hover_columns = ['ID', 'Story Days (Estimated)']
         stories = Dat.stories().reset_index()
-        ma_windows = [3,7,14,30]
+        ma_windows = [3,5,10,20]
         stories_by_end_date = Dat.stories_by_end_date(ma_windows)
 
         fig = sp.make_subplots(
