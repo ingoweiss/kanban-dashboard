@@ -17,7 +17,7 @@ class Data:
         today = pd.to_datetime('today')
 
         stories = pd.read_json(Data._data_dir + '/stories.json', dtype={'size': 'int64', 'start_date': 'datetime64[D]', 'end_date': 'datetime64[D]'})\
-                    .rename(columns={'id': 'ID', 'size': 'Size', 'start_date': 'Start Date', 'end_date': 'End Date (Actual)'})\
+                    .rename(columns={'id': 'ID', 'summary': 'Summary', 'size': 'Size', 'start_date': 'Start Date', 'end_date': 'End Date (Actual)'})\
                     .set_index('ID')\
                     .sort_values(['End Date (Actual)', 'Start Date'], ascending=[True, True])
 
