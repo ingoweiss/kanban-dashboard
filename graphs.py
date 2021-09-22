@@ -69,8 +69,8 @@ class Graphs:
                 cmid=1,
                 cmax=1.2,
             ),
-            customdata=stories[['ID', 'Summary', 'Size']],
-            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<extra></extra>",
+            customdata=stories[['ID', 'Summary', 'Size', 'End Date (Actual)', 'Relative Cycle Time']],
+            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%b %d}<br>%{customdata[4]:%} complete<extra></extra>",
             showlegend=False
         ), row=2, col=1)
         for window in ma_windows:
