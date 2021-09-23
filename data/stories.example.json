@@ -1,0 +1,282 @@
+[
+    {
+        "id": "US5000",
+        "summary": "The Manchurian Candidate",
+        "size": 1,
+        "start_date": "2020-04-08",
+        "end_date": "2020-04-09"
+    },
+    {
+        "id": "US5001",
+        "summary": "El laberinto del fauno",
+        "size": 5,
+        "start_date": "2020-04-08",
+        "end_date": "2020-04-15"
+    },
+    {
+        "id": "US5002",
+        "summary": "Letters from Iwo Jima",
+        "size": 1,
+        "start_date": "2020-04-17",
+        "end_date": "2020-04-20"
+    },
+    {
+        "id": "US5003",
+        "summary": "The Wild Bunch",
+        "size": 8,
+        "start_date": "2020-04-14",
+        "end_date": "2020-04-28"
+    },
+    {
+        "id": "US5004",
+        "summary": "The Gold Rush",
+        "size": 1,
+        "start_date": "2020-03-30",
+        "end_date": "2020-03-31"
+    },
+    {
+        "id": "US5005",
+        "summary": "The Exorcist",
+        "size": 3,
+        "start_date": "2020-05-04",
+        "end_date": "2020-05-08"
+    },
+    {
+        "id": "US5006",
+        "summary": "Gran Torino",
+        "size": 2,
+        "start_date": "2020-03-30",
+        "end_date": "2020-04-01"
+    },
+    {
+        "id": "US5007",
+        "summary": "A Clockwork Orange",
+        "size": 5,
+        "start_date": "2020-05-22",
+        "end_date": "2020-06-01"
+    },
+    {
+        "id": "US5008",
+        "summary": "Batman Begins",
+        "size": 8,
+        "start_date": "2020-04-17",
+        "end_date": "2020-04-28"
+    },
+    {
+        "id": "US5009",
+        "summary": "The Deer Hunter",
+        "size": 1,
+        "start_date": "2020-04-13",
+        "end_date": "2020-04-15"
+    },
+    {
+        "id": "US5010",
+        "summary": "Låt den rätte komma in",
+        "size": 5,
+        "start_date": "2020-03-24",
+        "end_date": "2020-04-07"
+    },
+    {
+        "id": "US5011",
+        "summary": "Singin' in the Rain",
+        "size": 1,
+        "start_date": "2020-03-23",
+        "end_date": "2020-03-25"
+    },
+    {
+        "id": "US5012",
+        "summary": "Sleuth",
+        "size": 2,
+        "start_date": "2020-03-26",
+        "end_date": "2020-04-01"
+    },
+    {
+        "id": "US5013",
+        "summary": "Der Untergang",
+        "size": 1,
+        "start_date": "2020-04-09",
+        "end_date": "2020-04-13"
+    },
+    {
+        "id": "US5014",
+        "summary": "Ikiru",
+        "size": 5,
+        "start_date": "2020-05-05",
+        "end_date": "2020-05-14"
+    },
+    {
+        "id": "US5015",
+        "summary": "The Incredibles",
+        "size": 3,
+        "start_date": "2020-04-27",
+        "end_date": "2020-05-05"
+    },
+    {
+        "id": "US5016",
+        "summary": "The Usual Suspects",
+        "size": 1,
+        "start_date": "2020-05-22",
+        "end_date": "2020-05-26"
+    },
+    {
+        "id": "US5017",
+        "summary": "American Beauty",
+        "size": 3,
+        "start_date": "2020-04-30",
+        "end_date": "2020-05-07"
+    },
+    {
+        "id": "US5018",
+        "summary": "The Sixth Sense",
+        "size": 5,
+        "start_date": "2020-04-02",
+        "end_date": "2020-04-15"
+    },
+    {
+        "id": "US5019",
+        "summary": "Gran Torino",
+        "size": 8,
+        "start_date": "2020-05-11",
+        "end_date": "2020-05-28"
+    },
+    {
+        "id": "US5020",
+        "summary": "Stalag",
+        "size": 8,
+        "start_date": "2020-04-13",
+        "end_date": "2020-04-21"
+    },
+    {
+        "id": "US5021",
+        "summary": "Oldeuboi",
+        "size": 5,
+        "start_date": "2020-05-22",
+        "end_date": "2020-06-04"
+    },
+    {
+        "id": "US5022",
+        "summary": "The Philadelphia Story",
+        "size": 8,
+        "start_date": "2020-04-22",
+        "end_date": "2020-05-11"
+    },
+    {
+        "id": "US5023",
+        "summary": "Hotel Rwanda",
+        "size": 8,
+        "start_date": "2020-05-11",
+        "end_date": "2020-06-01"
+    },
+    {
+        "id": "US5024",
+        "summary": "Se7en",
+        "size": 8,
+        "start_date": "2020-04-28",
+        "end_date": "2020-05-14"
+    },
+    {
+        "id": "US5025",
+        "summary": "Sen to Chihiro no kamikakushi",
+        "size": 5,
+        "start_date": "2020-04-16",
+        "end_date": "2020-04-27"
+    },
+    {
+        "id": "US5026",
+        "summary": "Butch Cassidy and the Sundance Kid",
+        "size": 1,
+        "start_date": "2020-05-21",
+        "end_date": "2020-05-26"
+    },
+    {
+        "id": "US5027",
+        "summary": "Modern Times",
+        "size": 2,
+        "start_date": "2020-05-19",
+        "end_date": "2020-05-26"
+    },
+    {
+        "id": "US5028",
+        "summary": "Le notti di Cabiria",
+        "size": 1,
+        "start_date": "2020-04-28",
+        "end_date": "2020-04-30"
+    },
+    {
+        "id": "US5029",
+        "summary": "Batman Begins",
+        "size": 3,
+        "start_date": "2020-03-30",
+        "end_date": "2020-04-03"
+    },
+    {
+        "id": "US5030",
+        "summary": "The Bourne Ultimatum",
+        "size": 3,
+        "start_date": "2020-05-04",
+        "end_date": "2020-05-08"
+    },
+    {
+        "id": "US5031",
+        "summary": "Le scaphandre et le papillon",
+        "size": 1,
+        "start_date": "2020-05-19",
+        "end_date": "2020-05-20"
+    },
+    {
+        "id": "US5032",
+        "summary": "Alien",
+        "size": 5,
+        "start_date": "2020-05-05",
+        "end_date": "2020-05-18"
+    },
+    {
+        "id": "US5033",
+        "summary": "Aliens",
+        "size": 3,
+        "start_date": "2020-03-17",
+        "end_date": "2020-03-20"
+    },
+    {
+        "id": "US5034",
+        "summary": "Life of Brian",
+        "size": 8,
+        "start_date": "2020-03-23",
+        "end_date": "2020-04-13"
+    },
+    {
+        "id": "US5035",
+        "summary": "Nuovo Cinema Paradiso",
+        "size": 3,
+        "start_date": "2020-03-16",
+        "end_date": "2020-03-24"
+    },
+    {
+        "id": "US5036",
+        "summary": "Rocky",
+        "size": 3,
+        "start_date": "2020-04-03",
+        "end_date": "2020-04-09"
+    },
+    {
+        "id": "US5037",
+        "summary": "Il buono, il brutto, il cattivo.",
+        "size": 8,
+        "start_date": "2020-04-29",
+        "end_date": "2020-05-19"
+    },
+    {
+        "id": "US5038",
+        "summary": "Platoon",
+        "size": 1,
+        "start_date": "2020-05-11",
+        "end_date": "2020-05-12"
+    },
+    {
+        "id": "US5039",
+        "summary": "8½",
+        "size": 5,
+        "start_date": "2020-05-21",
+        "end_date": "2020-06-03"
+    }
+]
