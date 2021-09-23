@@ -6,6 +6,9 @@ from config import Config
 Data._data_dir = 'test/data'
 Config._data_dir = 'test/data'
 
+from freezegun import freeze_time
+
+@freeze_time("2012-05-20")
 def test_completed():
     stories = Data.stories()
     # "id": "US5000",
