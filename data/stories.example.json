@@ -150,8 +150,8 @@
         "id": "US5021",
         "summary": "Oldeuboi",
         "size": 5,
-        "start_date": "2020-05-22",
-        "end_date": "2020-06-04"
+        "start_date": "2020-05-26",
+        "end_date": null
     },
     {
         "id": "US5022",
@@ -276,7 +276,7 @@
         "id": "US5039",
         "summary": "8½",
         "size": 5,
-        "start_date": "2020-05-21",
-        "end_date": "2020-06-03"
+        "start_date": "2020-05-25",
+        "end_date": null
     }
 ]
