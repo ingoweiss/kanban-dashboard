@@ -31,8 +31,8 @@
         "id": "US5004",
         "summary": "The Gold Rush",
         "size": 1,
-        "start_date": "2020-03-30",
-        "end_date": "2020-03-31"
+        "start_date": "2020-04-01",
+        "end_date": "2020-04-02"
     },
     {
         "id": "US5005",
@@ -66,8 +66,8 @@
         "id": "US5009",
         "summary": "The Deer Hunter",
         "size": 1,
-        "start_date": "2020-04-13",
-        "end_date": "2020-04-15"
+        "start_date": "2020-04-14",
+        "end_date": "2020-04-16"
     },
     {
         "id": "US5010",
@@ -262,7 +262,7 @@
         "id": "US5037",
         "summary": "Il buono, il brutto, il cattivo.",
         "size": 8,
-        "start_date": "2020-04-29",
+        "start_date": "2020-04-14",
         "end_date": "2020-05-19"
     },
     {
