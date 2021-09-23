@@ -21,6 +21,7 @@ class Graphs:
         total_scope = story_days['Burn Down (Actual or Estimated)'].max()
         hover_columns = ['ID', 'Story Days (Estimated)']
         stories = Dat.stories().reset_index()
+        completed_stories = stories[stories['End Date (Actual)'].notna()]
         ma_windows = [3,5,10,20]
         stories_by_end_date = Dat.stories_by_end_date(ma_windows)
 
@@ -60,16 +61,16 @@ class Graphs:
         # Throughput:
         fig.add_trace(go.Bar(
             name="Stories Completed",
-            x=stories['End Date (Actual)'],
-            y=stories['Size'],
+            x=completed_stories['End Date (Actual)'],
+            y=completed_stories['Size'],
             marker=dict(
-                color=stories['Relative Cycle Time'],
+                color=completed_stories['Relative Cycle Time'],
                 colorscale=['lightgray', 'orange'],
                 cmin=0.8,
                 cmid=1,
                 cmax=1.2,
             ),
-            customdata=stories[['ID', 'Summary', 'Size', 'End Date (Actual)', 'Relative Cycle Time']],
+            customdata=completed_stories[['ID', 'Summary', 'Size', 'End Date (Actual)', 'Relative Cycle Time']],
             hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%b %d}<br>%{customdata[4]:%} complete<extra></extra>",
             showlegend=False
         ), row=2, col=1)
