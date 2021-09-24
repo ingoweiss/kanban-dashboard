@@ -22,8 +22,7 @@ class Config:
         self.project_working_days = [(d - self.project_start_date).days+1 for d in self.project_working_dates]
         self.project_nonworking_dates = [d for d in self.project_dates if d not in self.project_working_dates]
         self.project_nonworking_days = [d for d in self.project_days if d not in self.project_working_days]
-        self.structuring = self._data['structuring']
-        self.structuring_factor = 1 + self.structuring
+        self.forecast_mode = self._data['forecast_mode']
 
     @classmethod
     def instance(cls):

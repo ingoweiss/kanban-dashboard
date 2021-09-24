@@ -25,14 +25,32 @@ class Data:
         started = stories['Start Date'].notna()
         in_flight = stories['Start Date'].notna() & stories['End Date (Actual)'].isna()
 
-        # Add estimate of days needed to implement the story, based on size and configured structuring factor:
-        stories['Story Days (Estimated)'] = round(stories['Size'] * conf.structuring_factor).astype('Int64')
-
         # For in-flight stories, add the number of business days since they were started:
         stories.loc[in_flight, 'Story Days (Elapsed)'] = stories.loc[in_flight].apply(lambda s: len(pd.date_range(s['Start Date'], today, freq=conf.offset)), axis=1)
 
         # For completed stories, add the number of business days used to complete them:
         stories.loc[completed, 'Story Days (Actual)'] = stories.loc[completed].apply(lambda s: len(pd.date_range(s['Start Date'], s['End Date (Actual)'], freq=conf.offset)), axis=1)
+
+        # Compute story days statistics for each story size:
+        stats= stories\
+            .groupby('Size')\
+            .agg({'Story Days (Actual)': ['median', 'mean']})
+        stats.columns = ['Story Days (Median)', 'Story Days (Mean)']
+
+        # Add story days statistics to stories:
+        stories = pd.merge(
+            stories, stats, left_on="Size", right_index=True, how="left", sort=False
+        )
+
+        # Add estimate of days needed to implement the story, based on either the median or mean story days for the story size (configurable)
+        if conf.forecast_mode == 'mean':
+            stories['Story Days (Estimated)'] = stories['Story Days (Mean)']\
+                .round()\
+                .fillna(stories['Size'])
+        else:
+            stories['Story Days (Estimated)'] = stories['Story Days (Median)']\
+                .round()\
+                .fillna(stories['Size'])
 
         # For in-flight and completed stories, add the estimated end date based on 'Start Date' and 'Story Days (Estimated)':
         stories.loc[started, 'End Date (Estimated)'] = stories.loc[started].apply(lambda s: s['Start Date'] + pd.offsets.CDay(calendar=conf.calendar, n=s['Story Days (Estimated)']-1), axis=1)

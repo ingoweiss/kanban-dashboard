@@ -1,8 +1,17 @@
 [
   {
     "id": "US5000",
+    "summary": "Toy Story",
     "size": 5,
     "start_date": "2020-05-04",
     "end_date": "2020-05-12"
+  },
+  {
+    "id": "US5001",
+    "summary": "The Lord of the Rings: The Fellowship of the Ring",
+    "size": 8,
+    "start_date": "2020-05-18",
+    "end_date": null
   }
+
 ]
