@@ -17,6 +17,7 @@ class Graphs:
         conf = Config.instance()
         story_days = Dat.story_days().reset_index()
         today = pd.to_datetime('today')
+        today = pd.to_datetime('2020-06-01')
         last_business_day = today - pd.offsets.CDay(calendar=conf.calendar)
         projected = (story_days['Date'] >= today) & (story_days['End Date (Actual)'].isna())
         total_scope = story_days['Burn Down (Actual or Estimated)'].max()
@@ -111,13 +112,25 @@ class Graphs:
         # WIP:
         fig.add_trace(go.Scatter(
             name='WIP',
-            x=wip.index,
-            y=wip['ID'],
+            x=wip[:today].index,
+            y=wip[:today]['ID'],
             mode='lines+markers',
             line=dict(
                 color='steelblue',
                 shape='hv'
             ),
+            hovertemplate="%{x|%b %d}: %{y}<extra></extra>"
+        ), row=3, col=1)
+        fig.add_trace(go.Scatter(
+            name='WIP',
+            x=wip[today:].index,
+            y=wip[today:]['ID'],
+            mode='lines+markers',
+            line=dict(
+                color='steelblue',
+                shape='hv'
+            ),
+            opacity=0.2,
             hovertemplate="%{x|%b %d}: %{y}<extra></extra>"
         ), row=3, col=1)
         fig.update_layout(
