@@ -17,7 +17,6 @@ class Graphs:
         conf = Config.instance()
         story_days = Dat.story_days().reset_index()
         today = pd.to_datetime('today')
-        today = pd.to_datetime('2020-06-01')
         last_business_day = today - pd.offsets.CDay(calendar=conf.calendar)
         projected = (story_days['Date'] >= today) & (story_days['End Date (Actual)'].isna())
         total_scope = story_days['Burn Down (Actual or Estimated)'].max()
@@ -50,6 +49,7 @@ class Graphs:
             customdata=story_days[['ID', 'Summary', 'Size', 'Date', 'Completeness (Estimated)']],
             hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%b %d}<br>%{customdata[4]:%}<extra></extra>",
         ), row=1, col=1)
+        # Today line:
         fig.add_shape(
             type='line',
             xref="x",
@@ -58,7 +58,9 @@ class Graphs:
             x1=today,
             y0=total_scope,
             y1=0,
-            line=dict(width=1, color='steelblue', dash='dash')
+            line=dict(width=1, color='steelblue', dash='dash'),
+            row=1,
+            col=1
         )
 
         # Throughput:
@@ -89,8 +91,7 @@ class Graphs:
                 visible=active_trace_flag,
                 mode='lines+markers',
                 line=dict(
-                    color='steelblue',
-                    # shape='spline'
+                    color='steelblue'
                 ),
                 hovertemplate="%{x|%b %d}: %{y} Points<extra></extra>",
             ), row=2, col=1)
@@ -102,13 +103,12 @@ class Graphs:
                 visible=active_trace_flag,
                 mode='lines+markers',
                 line=dict(
-                    color='steelblue',
-                    # dash='dot',
-                    # shape='spline'
+                    color='steelblue'
                 ),
                 opacity=0.2,
                 hovertemplate="%{x|%b %d}: %{y} Points<extra></extra>",
             ), row=2, col=1)
+
         # WIP:
         fig.add_trace(go.Scatter(
             name='WIP',
@@ -172,7 +172,8 @@ class Graphs:
             ],
             tick0=conf.project_start_date,
             dtick=(7*24*60*60*1000),
-            ticks='outside'
+            ticks='outside',
+            showticklabels=True
         ))
         graph = dcc.Graph(
             id='burndown-chart',
