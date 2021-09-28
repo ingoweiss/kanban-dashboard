@@ -31,7 +31,10 @@ class Data:
         # For completed stories, add the number of business days used to complete them:
         stories.loc[completed, 'Story Days (Actual)'] = stories.loc[completed].apply(lambda s: len(pd.date_range(s['Start Date'], s['End Date (Actual)'], freq=conf.offset)), axis=1)
 
-        # Compute story days statistics for each story size:
+        # add current story days, whether actual or elapsed:
+        stories['Story Days (Actual or Elapsed)'] = stories['Story Days (Actual)'].combine_first(stories['Story Days (Elapsed)'])
+
+       # Compute story days statistics for each story size:
         stats= stories\
             .groupby('Size')\
             .agg({'Story Days (Actual)': ['median', 'mean']})
@@ -55,6 +58,10 @@ class Data:
         # For in-flight and completed stories, add the estimated end date based on 'Start Date' and 'Story Days (Estimated)':
         stories.loc[started, 'End Date (Estimated)'] = stories.loc[started].apply(lambda s: s['Start Date'] + pd.offsets.CDay(calendar=conf.calendar, n=s['Story Days (Estimated)']-1), axis=1)
 
+        # Add the actual or current estimated end date as either 'End Date (Actual)' if available or the greater of 'End Date (Estimated)' and today:
+        stories['Today'] = today
+        stories['End Date (Actual or Current Estimated)'] = stories['End Date (Actual)'].combine_first(stories[['End Date (Estimated)', 'Today']].max(axis=1))
+
         # For completed stories, add the actual cumulative burn-up in terms of story size:
         stories.loc[completed, 'Burn Up (Actual)'] = stories['Size'].expanding().sum()#.astype('Int64')
 
@@ -76,18 +83,20 @@ class Data:
         stories['Burn Down (Actual or Estimated)'] = stories['Burn Down (Actual)'].combine_first(stories['Burn Down (Estimated)'])
 
         # Add 'relative cycle time' as actual story days per estimated story day:
-        stories.loc[completed, 'Relative Cycle Time'] = stories['Story Days (Actual)'] / stories['Story Days (Estimated)']
+        stories.loc[:, 'Relative Cycle Time'] = stories['Story Days (Actual or Elapsed)'] / stories['Story Days (Estimated)']
 
         return stories
     
     @classmethod
-    def stories_by_end_date(cls, ma_windows=[]):
+    def stories_by_end_date(cls, ma_windows=[], mode='actual'):
 
         stories = cls.stories()
         stories['Stories'] = 1
         completed = stories['End Date (Actual)'].notna()
-        stories_by_end_date = stories.loc[completed]\
-                              .groupby('End Date (Actual)')\
+        if mode == 'actual':
+            stories = stories.loc[completed]
+        stories_by_end_date = stories\
+                              .groupby('End Date (Actual or Current Estimated)')\
                               .sum()\
                               .loc[:, ['Stories', 'Size', 'Story Days (Actual)']]\
                               .resample(Config.instance().offset, level=0)\

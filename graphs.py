@@ -17,13 +17,14 @@ class Graphs:
         conf = Config.instance()
         story_days = Dat.story_days().reset_index()
         today = pd.to_datetime('today')
-        projected = story_days['Date'] > today
+        last_business_day = today - pd.offsets.CDay(calendar=conf.calendar)
+        projected = (story_days['Date'] >= today) & (story_days['End Date (Actual)'].isna())
         total_scope = story_days['Burn Down (Actual or Estimated)'].max()
         hover_columns = ['ID', 'Story Days (Estimated)']
         stories = Dat.stories().reset_index()
-        completed_stories = stories[stories['End Date (Actual)'].notna()]
         ma_windows = [3,5,10,20]
-        stories_by_end_date = Dat.stories_by_end_date(ma_windows)
+        stories_by_end_date_actual = Dat.stories_by_end_date(ma_windows, 'actual')
+        stories_by_end_date_estimated = Dat.stories_by_end_date(ma_windows, 'estimated')[last_business_day:]
 
         fig = sp.make_subplots(
             rows=2, cols=1,
@@ -38,7 +39,7 @@ class Graphs:
             base=story_days['Burn Down (Actual or Estimated)'],
             marker=dict(
                 color=story_days['Completeness (Estimated)'],
-                colorscale=['lightgray', 'orange'],
+                colorscale=['steelblue', 'tomato'],
                 cmin=0.8,
                 cmid=1,
                 cmax=1.2,
@@ -55,38 +56,55 @@ class Graphs:
             x1=today,
             y0=total_scope,
             y1=0,
-            line=dict(width=1, color='lightgray', dash='dash')
+            line=dict(width=1, color='steelblue', dash='dash')
         )
 
         # Throughput:
         fig.add_trace(go.Bar(
             name="Stories Completed",
-            x=completed_stories['End Date (Actual)'],
-            y=completed_stories['Size'],
+            x=stories['End Date (Actual or Current Estimated)'],
+            y=stories['Size'],
             marker=dict(
-                color=completed_stories['Relative Cycle Time'],
-                colorscale=['lightgray', 'orange'],
+                color=stories['Relative Cycle Time'],
+                colorscale=['steelblue', 'tomato'],
                 cmin=0.8,
                 cmid=1,
                 cmax=1.2,
+                opacity=stories['End Date (Actual)'].isna().map({True: 0.2, False: 1.0})
             ),
-            customdata=completed_stories[['ID', 'Summary', 'Size', 'End Date (Actual)', 'Relative Cycle Time']],
+            customdata=stories[['ID', 'Summary', 'Size', 'End Date (Actual or Current Estimated)', 'Relative Cycle Time']],
             hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%b %d}<br>%{customdata[4]:%}<extra></extra>",
             showlegend=False
         ), row=2, col=1)
         for window in ma_windows:
             name = '{}-Day Size'.format(str(window))
             active_trace_flag = (window == ma_windows[2])
+            # Actual throughput:
             fig.add_trace(go.Scatter(
                 name=name,
-                x=stories_by_end_date.index,
-                y=stories_by_end_date[name],
+                x=stories_by_end_date_actual.index,
+                y=stories_by_end_date_actual[name],
                 visible=active_trace_flag,
-                mode='lines',
+                mode='lines+markers',
                 line=dict(
-                    color='mediumslateblue',
+                    color='steelblue',
                     # shape='spline'
                 ),
+                hovertemplate="%{x|%b %d}: %{y} Points<extra></extra>",
+            ), row=2, col=1)
+            # Estimated throughput:
+            fig.add_trace(go.Scatter(
+                name=name,
+                x=stories_by_end_date_estimated.index,
+                y=stories_by_end_date_estimated[name],
+                visible=active_trace_flag,
+                mode='lines+markers',
+                line=dict(
+                    color='steelblue',
+                    # dash='dot',
+                    # shape='spline'
+                ),
+                opacity=0.2,
                 hovertemplate="%{x|%b %d}: %{y} Points<extra></extra>",
             ), row=2, col=1)
         fig.update_layout(
@@ -111,7 +129,7 @@ class Graphs:
                     type = "buttons",
                     direction = "left",
                     active=2,
-                    buttons=list([dict(args=[dict(visible=[True]*2+[w == v for w in ma_windows])], label="{} Days".format(v), method="update") for i,v in enumerate(ma_windows)]),
+                    buttons=list([dict(args=[dict(visible=[True]*2+[w == v for w in ma_windows for x in [0,1]])], label="{} Days".format(v), method="update") for i,v in enumerate(ma_windows)]),
                     showactive=True,
                     x=0.5,
                     xanchor="right",

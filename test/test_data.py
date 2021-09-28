@@ -19,5 +19,6 @@ def test_completed():
     assert us5000['Start Date'].strftime('%Y-%m-%d') == '2020-05-04'
     assert us5000['Story Days (Estimated)'] == 7
     assert us5000['Story Days (Actual)'] == 7
+    assert us5000['Story Days (Median)'] == 7
     assert us5000['End Date (Estimated)'].strftime('%Y-%m-%d') == '2020-05-12'
     assert us5000['End Date (Actual)'].strftime('%Y-%m-%d') == '2020-05-12'
