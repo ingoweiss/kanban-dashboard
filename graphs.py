@@ -25,10 +25,11 @@ class Graphs:
         ma_windows = [3,5,10,20]
         stories_by_end_date_actual = Dat.stories_by_end_date(ma_windows, 'actual')
         stories_by_end_date_estimated = Dat.stories_by_end_date(ma_windows, 'estimated')[last_business_day:]
+        wip = Dat.wip()
 
         fig = sp.make_subplots(
-            rows=2, cols=1,
-            row_heights=[0.7, 0.3],
+            rows=3, cols=1,
+            row_heights=[0.6, 0.2, 0.2],
             shared_xaxes=True
         )
 
@@ -72,7 +73,7 @@ class Graphs:
                 cmax=1.2,
                 opacity=stories['End Date (Actual)'].isna().map({True: 0.2, False: 1.0})
             ),
-            customdata=stories[['ID', 'Summary', 'Size', 'End Date (Actual or Current Estimated)', 'Relative Cycle Time']],
+            customdata=stories[['ID', 'Summary', 'Size', 'End Date (Actual or Current Estimated)', 'Relative Cycle Time (Estimated)']],
             hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%b %d}<br>%{customdata[4]:%}<extra></extra>",
             showlegend=False
         ), row=2, col=1)
@@ -107,6 +108,18 @@ class Graphs:
                 opacity=0.2,
                 hovertemplate="%{x|%b %d}: %{y} Points<extra></extra>",
             ), row=2, col=1)
+        # WIP:
+        fig.add_trace(go.Scatter(
+            name='WIP',
+            x=wip.index,
+            y=wip['ID'],
+            mode='lines+markers',
+            line=dict(
+                color='steelblue',
+                shape='hv'
+            ),
+            hovertemplate="%{x|%b %d}: %{y}<extra></extra>"
+        ), row=3, col=1)
         fig.update_layout(
             barmode='stack',
             bargap=0,
@@ -131,9 +144,9 @@ class Graphs:
                     active=2,
                     buttons=list([dict(args=[dict(visible=[True]*2+[w == v for w in ma_windows for x in [0,1]])], label="{} Days".format(v), method="update") for i,v in enumerate(ma_windows)]),
                     showactive=True,
-                    x=0.5,
+                    x=0.6,
                     xanchor="right",
-                    y=0.3,
+                    y=0.45,
                     yanchor="top",
                     pad=dict(r=5, l=5)
                 )

@@ -85,6 +85,10 @@ class Data:
         # Add 'relative cycle time' as actual story days per estimated story day:
         stories.loc[:, 'Relative Cycle Time'] = stories['Story Days (Actual or Elapsed)'] / stories['Story Days (Estimated)']
 
+        # Add 'Relative Cycle Time (Estimated)' as either the actual cycle time or 1 for non-overdue, in-flight stories
+        stories.loc[:, 'Relative Cycle Time (Estimated)'] = stories['Relative Cycle Time']
+        stories.loc[in_flight & (stories['Relative Cycle Time'] < 1), 'Relative Cycle Time (Estimated)'] = 1
+
         return stories
     
     @classmethod
@@ -130,4 +134,13 @@ class Data:
         story_days['Completeness (Estimated)'] = ((story_days['Story Day']+1).astype('float64') / story_days['Story Days (Estimated)'].astype('float64')).round(2)
 
         return story_days
+
+    @classmethod
+    def wip(cls):
+
+        story_days = cls.story_days()
+        return story_days\
+            .reset_index()[['ID', 'Date']]\
+            .groupby('Date')\
+            .count()
 
