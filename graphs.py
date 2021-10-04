@@ -16,7 +16,7 @@ class Graphs:
 
         conf = Config.instance()
         story_days = Dat.story_days().reset_index()
-        today = pd.to_datetime('today')
+        today = conf.today
         last_business_day = today - pd.offsets.CDay(calendar=conf.calendar)
         projected = (story_days['Date'] >= today) & (story_days['End Date (Actual)'].isna())
         total_scope = story_days['Burn Down (Actual or Estimated)'].max()

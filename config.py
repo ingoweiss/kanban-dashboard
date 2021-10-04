@@ -11,6 +11,10 @@ class Config:
     def __init__(self):
         with open(Config._data_dir + '/config.json') as json_file:
             self._data = json.load(json_file)
+        if 'today' in self._data.keys():
+            self.today = pd.to_datetime(self._data['today'])
+        else:
+            self.today = pd.to_datetime('today')
         self.calendar = ProjectCalendar()
         self.offset = pd.offsets.CDay(calendar=self.calendar)
         self.project_start_date = pd.to_datetime(self._data['project_start_date'])

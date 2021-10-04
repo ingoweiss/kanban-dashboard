@@ -14,8 +14,7 @@ class Data:
     def stories(cls):
 
         conf = Config.instance()
-        today = pd.to_datetime('today')
-
+        today = conf.today
         stories = pd.read_json(Data._data_dir + '/stories.json', dtype={'size': 'int64', 'start_date': 'datetime64[D]', 'end_date': 'datetime64[D]'})\
                     .rename(columns={'id': 'ID', 'summary': 'Summary', 'size': 'Size', 'start_date': 'Start Date', 'end_date': 'End Date (Actual)'})\
                     .set_index('ID')\
