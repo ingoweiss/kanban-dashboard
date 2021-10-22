@@ -34,6 +34,8 @@ class Graphs:
         )
 
         # Burndown:
+        custom_data = story_days[['ID', 'Summary', 'Size', 'Date', 'Story Day', 'Completeness (Estimated)']]
+        custom_data['Story Day'] += 1
         fig.add_trace(go.Bar(   
             x=story_days['Date'],
             y=story_days['Size'],
@@ -46,8 +48,8 @@ class Graphs:
                 cmax=1.2,
                 opacity=projected.map({True: 0.2, False: 1.0})
             ),
-            customdata=story_days[['ID', 'Summary', 'Size', 'Date', 'Completeness (Estimated)']],
-            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%b %d}<br>%{customdata[4]:%}<extra></extra>",
+            customdata=custom_data,
+            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%b %d} (Day %{customdata[4]})<br>%{customdata[5]:%}<extra></extra>",
         ), row=1, col=1)
         # Today line:
         fig.add_shape(
@@ -64,6 +66,8 @@ class Graphs:
         )
 
         # Throughput:
+        custom_data=stories[['ID', 'Summary', 'Size', 'End Date (Actual or Current Estimated)', 'Story Days (Actual)', 'Relative Cycle Time (Estimated)']]
+        custom_data['Story Days (Actual)'] += 1
         fig.add_trace(go.Bar(
             name="Stories Completed",
             x=stories['End Date (Actual or Current Estimated)'],
@@ -76,8 +80,8 @@ class Graphs:
                 cmax=1.2,
                 opacity=stories['End Date (Actual)'].isna().map({True: 0.2, False: 1.0})
             ),
-            customdata=stories[['ID', 'Summary', 'Size', 'End Date (Actual or Current Estimated)', 'Relative Cycle Time (Estimated)']],
-            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%b %d}<br>%{customdata[4]:%}<extra></extra>",
+            customdata=custom_data,
+            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%b %d} (Day %{customdata[4]})<br>%{customdata[5]:%}<extra></extra>",
             showlegend=False
         ), row=2, col=1)
         for window in ma_windows:
