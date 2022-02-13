@@ -1,5 +1,5 @@
 pandas
-dash==1.12.0
+dash
 dash_bootstrap_components
 pytest
 statsmodels
