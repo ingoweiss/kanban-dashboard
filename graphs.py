@@ -66,8 +66,8 @@ class Graphs:
         )
 
         # Throughput:
-        custom_data=stories[['ID', 'Summary', 'Size', 'End Date (Actual or Current Estimated)', 'Story Days (Actual)', 'Relative Cycle Time (Estimated)']]
-        custom_data['Story Days (Actual)'] += 1
+        custom_data=stories[['ID', 'Summary', 'Size', 'End Date (Actual or Current Estimated)', 'Story Days (Actual or Current Estimated)', 'Relative Cycle Time (Estimated)']]
+        # custom_data['Story Days (Actual or Estimated)'] += 1
         fig.add_trace(go.Bar(
             name="Stories Completed",
             x=stories['End Date (Actual or Current Estimated)'],

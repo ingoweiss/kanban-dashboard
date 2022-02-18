@@ -54,6 +54,9 @@ class Data:
                 .round()\
                 .fillna(stories['Size'])
 
+        # Add the actual or current estimated days to implement the story
+        stories.loc[:, 'Story Days (Actual or Current Estimated)'] = stories['Story Days (Actual)'].combine_first(stories[['Story Days (Estimated)', 'Story Days (Elapsed)']].max(axis=1))
+
         # For in-flight and completed stories, add the estimated end date based on 'Start Date' and 'Story Days (Estimated)':
         stories.loc[started, 'End Date (Estimated)'] = stories.loc[started].apply(lambda s: s['Start Date'] + pd.offsets.CDay(calendar=conf.calendar, n=s['Story Days (Estimated)']-1), axis=1)
 
