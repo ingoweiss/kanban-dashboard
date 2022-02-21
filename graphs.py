@@ -49,7 +49,7 @@ class Graphs:
                 opacity=projected.map({True: 0.2, False: 1.0})
             ),
             customdata=custom_data,
-            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%b %d} (Day %{customdata[4]})<br>%{customdata[5]:0%}<extra></extra>",
+            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%b %d} (Day %{customdata[4]})<br>%{customdata[5]:.0%}<extra></extra>",
         ), row=1, col=1)
         # Today line:
         fig.add_shape(
@@ -81,7 +81,7 @@ class Graphs:
                 opacity=stories['End Date (Actual)'].isna().map({True: 0.2, False: 1.0})
             ),
             customdata=custom_data,
-            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%b %d} (Day %{customdata[4]})<br>%{customdata[5]:0%}<extra></extra>",
+            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%b %d} (Day %{customdata[4]})<br>%{customdata[5]:.0%}<extra></extra>",
             showlegend=False
         ), row=2, col=1)
         for window in ma_windows:
