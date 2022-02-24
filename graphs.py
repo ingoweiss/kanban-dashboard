@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 import dash
-import dash_core_components as dcc
+from dash import dcc
 import plotly.io as pio
 import plotly.subplots as sp
 pio.templates.default = "plotly_white"
