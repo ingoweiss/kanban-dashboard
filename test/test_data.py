@@ -11,14 +11,29 @@ from freezegun import freeze_time
 @freeze_time("2012-05-20")
 def test_completed():
     stories = Data.stories()
-    # "id": "US5000",
-    # "size": 5,
-    # "start_date": "2020-05-04",
-    # "end_date": "2020-05-12"
-    us5000 = stories.loc['US5000']
-    assert us5000['Start Date'].strftime('%Y-%m-%d') == '2020-05-04'
-    assert us5000['Story Days (Estimated)'] == 7
-    assert us5000['Story Days (Actual)'] == 7
-    assert us5000['Story Days (Median)'] == 7
-    assert us5000['End Date (Estimated)'].strftime('%Y-%m-%d') == '2020-05-12'
-    assert us5000['End Date (Actual)'].strftime('%Y-%m-%d') == '2020-05-12'
+    story = stories.loc[stories['Summary']=='5-Pointer (Completed in 7 days)'].iloc[0]
+    assert story['Start Date'].strftime('%Y-%m-%d') == '2020-05-04'
+    assert story['Story Days (Estimated)'] == 7
+    assert story['Story Days (Actual)'] == 7
+    assert story['Story Days (Median)'] == 7
+    assert story['End Date (Estimated)'].strftime('%Y-%m-%d') == '2020-05-12'
+    assert story['End Date (Actual)'].strftime('%Y-%m-%d') == '2020-05-12'
+
+def test_in_flight():
+    stories = Data.stories()
+    story = stories.loc[stories['Summary']=='5-Pointer (3 days in)'].iloc[0]
+    assert story['Start Date'].strftime('%Y-%m-%d') == '2020-05-18'
+    assert story['Story Days (Estimated)'] == 7
+    assert story['Story Days (Elapsed)'] == 3
+    assert story['Story Days (Median)'] == 7
+    assert story['End Date (Estimated)'].strftime('%Y-%m-%d') == '2020-05-26'
+
+def test_in_flight_overdue():
+    stories = Data.stories()
+    story = stories.loc[stories['Summary']=='5-Pointer (10 days in)'].iloc[0]
+    assert story['Start Date'].strftime('%Y-%m-%d') == '2020-05-07'
+    assert story['Story Days (Estimated)'] == 7
+    assert story['Story Days (Elapsed)'] == 10
+    assert story['Story Days (Actual or Current Estimated)'] == 10
+    assert story['Story Days (Median)'] == 7
+    assert story['End Date (Actual or Current Estimated)'].strftime('%Y-%m-%d') == '2020-05-20'

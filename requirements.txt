@@ -4,4 +4,3 @@ dash_bootstrap_components
 pytest
 statsmodels
 gunicorn
-freezegun
