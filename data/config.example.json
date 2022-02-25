@@ -1,6 +1,4 @@
 {
-  "project_start_date": "2020-03-01",
-  "project_duration": 300,
   "forecast_mode": "median",
   "today": "2020-06-01"
 }

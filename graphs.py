@@ -1,3 +1,4 @@
+import datetime
 import pandas as pd
 import plotly.graph_objects as go
 import dash
@@ -26,6 +27,13 @@ class Graphs:
         stories_by_end_date_actual = Dat.stories_by_end_date(ma_windows, 'actual')
         stories_by_end_date_estimated = Dat.stories_by_end_date(ma_windows, 'estimated')[last_business_day:]
         wip = Dat.wip()
+
+        # Dates:
+        project_start_date = stories['Start Date'].min()
+        project_end_date = stories['End Date (Actual or Current Estimated)'].max()
+        project_dates = pd.date_range(project_start_date, project_end_date, freq='D')
+        project_working_dates = pd.date_range(project_start_date, project_end_date, freq=conf.offset)
+        project_nonworking_dates = [d for d in project_dates if d not in project_working_dates]
 
         fig = sp.make_subplots(
             rows=3, cols=1,
@@ -176,11 +184,10 @@ class Graphs:
             ]
         )
         fig.update_xaxes(dict(
-            # range=[conf.project_start_date, conf.project_end_date],
             rangebreaks=[
-                dict(values=conf.project_nonworking_dates)
+                dict(values=project_nonworking_dates)
             ],
-            tick0=conf.project_start_date,
+            tick0=project_start_date - datetime.timedelta(days=project_start_date.weekday()),
             dtick=(7*24*60*60*1000),
             ticks='outside',
             showticklabels=True

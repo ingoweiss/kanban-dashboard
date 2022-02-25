@@ -17,15 +17,6 @@ class Config:
             self.today = pd.to_datetime('today')
         self.calendar = ProjectCalendar()
         self.offset = pd.offsets.CDay(calendar=self.calendar)
-        self.project_start_date = pd.to_datetime(self._data['project_start_date'])
-        self.project_duration = self._data['project_duration']
-        self.project_end_date = self.project_start_date + pd.Timedelta(days=self.project_duration-1)
-        self.project_dates = pd.date_range(self.project_start_date, self.project_end_date, freq='D')
-        self.project_days = list(range(1, self.project_duration+1))
-        self.project_working_dates = pd.date_range(self.project_start_date, self.project_end_date, freq=pd.offsets.CDay(calendar=self.calendar))
-        self.project_working_days = [(d - self.project_start_date).days+1 for d in self.project_working_dates]
-        self.project_nonworking_dates = [d for d in self.project_dates if d not in self.project_working_dates]
-        self.project_nonworking_days = [d for d in self.project_days if d not in self.project_working_days]
         self.forecast_mode = self._data['forecast_mode']
 
     @classmethod
