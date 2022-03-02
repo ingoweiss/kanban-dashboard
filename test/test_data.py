@@ -7,7 +7,8 @@ Data._data_dir = 'test/data'
 Config._data_dir = 'test/data'
 
 def test_completed():
-    stories = Data.stories()
+    today = Config.instance().today
+    stories = Data.stories(today)
     story = stories.loc[stories['Summary']=='5-Pointer (Completed in 7 days)'].iloc[0]
     assert story['Start Date'].strftime('%Y-%m-%d') == '2020-05-04'
     assert story['Story Days (Estimated)'] == 7
@@ -17,7 +18,8 @@ def test_completed():
     assert story['End Date (Actual)'].strftime('%Y-%m-%d') == '2020-05-12'
 
 def test_in_flight():
-    stories = Data.stories()
+    today = Config.instance().today
+    stories = Data.stories(today)
     story = stories.loc[stories['Summary']=='5-Pointer (3 days in)'].iloc[0]
     assert story['Start Date'].strftime('%Y-%m-%d') == '2020-05-18'
     assert story['Story Days (Estimated)'] == 7
@@ -26,7 +28,8 @@ def test_in_flight():
     assert story['End Date (Estimated)'].strftime('%Y-%m-%d') == '2020-05-26'
 
 def test_in_flight_overdue():
-    stories = Data.stories()
+    today = Config.instance().today
+    stories = Data.stories(today)
     story = stories.loc[stories['Summary']=='5-Pointer (10 days in)'].iloc[0]
     assert story['Start Date'].strftime('%Y-%m-%d') == '2020-05-07'
     assert story['Story Days (Estimated)'] == 7

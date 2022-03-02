@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import json
 from datetime import datetime
+from functools import cache
 
 from config import Config
 
@@ -11,10 +12,10 @@ class Data:
     _data_dir = 'data'
 
     @classmethod
-    def stories(cls):
+    @cache
+    def stories(cls, today):
 
         conf = Config.instance()
-        today = conf.today
         stories = pd.read_json(Data._data_dir + '/stories.json', dtype={'size': 'int64', 'start_date': 'datetime64[D]', 'end_date': 'datetime64[D]'})\
                     .rename(columns={'id': 'ID', 'summary': 'Summary', 'size': 'Size', 'start_date': 'Start Date', 'end_date': 'End Date (Actual)'})\
                     .set_index('ID')\
@@ -94,9 +95,10 @@ class Data:
         return stories
     
     @classmethod
-    def stories_by_end_date(cls, ma_windows=[], mode='actual'):
+    @cache
+    def stories_by_end_date(cls, today, ma_windows=[], mode='actual'):
 
-        stories = cls.stories()
+        stories = cls.stories(today)
         stories['Stories'] = 1
         completed = stories['End Date (Actual)'].notna()
         if mode == 'actual':
@@ -118,10 +120,11 @@ class Data:
         return stories_by_end_date
 
     @classmethod
-    def story_days(cls):
+    @cache
+    def story_days(cls, today):
 
         conf = Config.instance()
-        stories = cls.stories()
+        stories = cls.stories(today)
 
         # determine and explode story days of all started stories:
         started = stories['Start Date'].notna()
@@ -138,9 +141,9 @@ class Data:
         return story_days
 
     @classmethod
-    def wip(cls):
+    def wip(cls, today):
 
-        story_days = cls.story_days()
+        story_days = cls.story_days(today)
         return story_days\
             .reset_index()[['ID', 'Date']]\
             .groupby('Date')\

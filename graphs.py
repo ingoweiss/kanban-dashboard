@@ -16,17 +16,17 @@ class Graphs:
     def timeline(cls):
 
         conf = Config.instance()
-        story_days = Dat.story_days().reset_index()
         today = conf.today
+        story_days = Dat.story_days(today).reset_index()
         last_business_day = today - pd.offsets.CDay(calendar=conf.calendar)
         projected = (story_days['Date'] >= today) & (story_days['End Date (Actual)'].isna())
         total_scope = story_days['Burn Down (Actual or Estimated)'].max()
         hover_columns = ['ID', 'Story Days (Estimated)']
-        stories = Dat.stories().reset_index()
-        ma_windows = [3,5,10,20]
-        stories_by_end_date_actual = Dat.stories_by_end_date(ma_windows, 'actual')
-        stories_by_end_date_estimated = Dat.stories_by_end_date(ma_windows, 'estimated')[last_business_day:]
-        wip = Dat.wip()
+        stories = Dat.stories(today).reset_index()
+        ma_windows = tuple([3,5,10,20])
+        stories_by_end_date_actual = Dat.stories_by_end_date(today, ma_windows, 'actual')
+        stories_by_end_date_estimated = Dat.stories_by_end_date(today, ma_windows, 'estimated')[last_business_day:]
+        wip = Dat.wip(today)
 
         # Dates:
         project_start_date = stories['Start Date'].min()
