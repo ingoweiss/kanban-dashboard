@@ -1,8 +1,7 @@
 from datetime import datetime
 
 import dash
-from dash import dcc
-from dash import html
+from dash import Dash, html, dcc, Input, Output
 import dash_bootstrap_components as dbc
 import pandas as pd
 import numpy as np
@@ -20,10 +19,20 @@ app.layout = dbc.Container([
     dbc.Row([
         dbc.Col(dbc.Card([
             dbc.CardHeader('Timeline'),
-            dbc.CardBody(Grph.timeline())
+            dbc.CardBody([
+                dcc.RangeSlider(0, 20, 1, value=[5, 15], id='my-range-slider'),
+                html.Div(id='output-container-range-slider'),
+                Grph.timeline()
+            ])
         ]), md=12, className='mb-3'),
     ]),
 ], fluid=True)
+
+@app.callback(
+    Output('output-container-range-slider', 'children'),
+    [Input('my-range-slider', 'value')])
+def update_output(value):
+    return 'You have selected "{}"'.format(value)
 
 if __name__ == '__main__':
     app.run_server(host='0.0.0.0', port=8050, debug=True)
