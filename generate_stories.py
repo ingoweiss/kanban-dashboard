@@ -1,39 +1,49 @@
 import json
 import random
-from datetime import datetime
-from datetime import timedelta
+import datetime
 from config import Config
 import pandas as pd
 import pdb
+import argparse
+from numpy.random import default_rng
+
+parser = argparse.ArgumentParser(description='Generate stories for testing purposes')
+parser.add_argument('--days', type=int, default=100,
+                    help='Number of days to generate')
+parser.add_argument('--complexity', type=float, default=0.2,
+                    help='Complexity of the project')
+parser.add_argument('--team-size', type=int, default=3,
+                    help='Team size')
+args = parser.parse_args()
 
 conf = Config.instance()
-today = pd.to_datetime('today')
+project_end_date = pd.to_datetime('today')
+project_start_date = project_end_date - datetime.timedelta(days = args.days)
+working_dates = pd.date_range(project_start_date, project_end_date, freq=conf.offset)
+rng = default_rng()
 random.seed(123)
 
-number_of_stories = 40
-starting_id = 5000
-
-working_days = conf.project_working_days
-current_day = (today - conf.project_start_date).days+1
-
 stories = []
-
-for i in range(starting_id, starting_id + number_of_stories):
-    story = dict()
-    story['id'] = 'US{}'.format(i)
-    story['size'] = random.choice([1,2,3,5,8])
-    start_day = random.randint(0, len(working_days)-20)
-    end_day = round(start_day + story['size'] / 100 * random.randint(80, 200))
-
-    if start_day <= current_day:
-        story['start_date'] = (conf.project_start_date + timedelta(days=working_days[start_day]-1)).strftime('%Y-%m-%d')
-    else:
-        story['start_date'] = ''
-    if end_day <= current_day:
-        story['end_date'] = (conf.project_start_date + timedelta(days=working_days[end_day]-1)).strftime('%Y-%m-%d')
-    else:
-        story['end_date'] = ''
-    stories.append(story)
+i = 1
+for start_date in working_dates:
+    wip = len([s for s in stories if (pd.to_datetime(s['start_date']) <= start_date) and (s['end_date'] == '' or pd.to_datetime(s['end_date']) >= start_date)])
+    for _ in range(args.team_size-wip):
+        story = dict()
+        story['id'] = 'US{}'.format(5000+i)
+        i+=1
+        story['summary'] = 'Test Story Summary'
+        story_size = random.choice([1,3,5,8])
+        story['size'] = story_size
+        story['start_date'] = start_date.strftime('%Y-%m-%d')
+        story_days = round(rng.normal(story_size*1.2, story_size*args.complexity))
+        if story_days < 1:
+            story_days = 1
+        end_date = start_date + pd.offsets.CDay(calendar=conf.calendar, n=story_days)
+        if end_date > project_end_date:
+            story['end_date'] = ''
+        else:
+            story['end_date'] = end_date.strftime('%Y-%m-%d')
+        stories.append(story)
 
 with open('data/stories.json', 'w') as json_file:
     json.dump(stories, json_file, indent=2)
