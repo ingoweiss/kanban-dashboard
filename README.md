@@ -1,4 +1,4 @@
-# kanban-dashboard
+# Kanban Dashboard
 
 A Dashboard visualizing throughput, cycle time and WIP for a Kanban project
 
