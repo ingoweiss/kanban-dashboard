@@ -37,9 +37,9 @@ range = pd.date_range(
     freq='W-MON'
 )
 
-formatted_range = {(d-epoch).days:d.strftime("%y-%m-%d") for d in range}
+formatted_range = {(d-epoch).days:d.strftime("%b %-d, %Y") for d in range}
 formatted_range_keys = list(formatted_range.keys())
-# pdb.set_trace()
+
 
 app.layout = dbc.Container([
     dbc.Row(dbc.Col(html.H1('Kanban Dashboard'), md=12, className='mb-3')),
