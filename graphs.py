@@ -6,6 +6,7 @@ from dash import dcc
 import plotly.io as pio
 import plotly.subplots as sp
 pio.templates.default = "plotly_white"
+import pdb
 
 from data import Data as Dat
 from config import Config
@@ -13,18 +14,17 @@ from config import Config
 class Graphs:
 
     @classmethod
-    def timeline(cls):
+    def timeline(cls, start_date=None, end_date=None):
 
         conf = Config.instance()
         today = conf.today
+
+        # Retrieve data:
         story_days = Dat.story_days(today).reset_index()
-        last_business_day = today - pd.offsets.CDay(calendar=conf.calendar)
-        projected = (story_days['Date'] >= today) & (story_days['End Date (Actual)'].isna())
-        total_scope = story_days['Burn Down (Actual or Estimated)'].max()
-        hover_columns = ['ID', 'Story Days (Estimated)']
         stories = Dat.stories(today).reset_index()
         ma_windows = tuple([3,5,10,20])
         stories_by_end_date_actual = Dat.stories_by_end_date(today, ma_windows, 'actual')
+        last_business_day = today - pd.offsets.CDay(calendar=conf.calendar)
         stories_by_end_date_estimated = Dat.stories_by_end_date(today, ma_windows, 'estimated')[last_business_day:]
         wip = Dat.wip(today)
 
@@ -34,6 +34,16 @@ class Graphs:
         project_dates = pd.date_range(project_start_date, project_end_date, freq='D')
         project_working_dates = pd.date_range(project_start_date, project_end_date, freq=conf.offset)
         project_nonworking_dates = [d for d in project_dates if d not in project_working_dates]
+
+        # Narrow to date range if provided:
+        if (start_date and end_date):
+            story_days = story_days.loc[(story_days['Date'] >= start_date) & (story_days['Date'] <= end_date)]
+            stories = stories.loc[(stories['End Date (Actual)'] >= start_date) & (stories['End Date (Actual)'] <= end_date)]
+            stories_by_end_date_actual = stories_by_end_date_actual[start_date:end_date]
+            stories_by_end_date_estimated = stories_by_end_date_estimated[start_date:end_date]
+            wip = wip[start_date:end_date]
+
+        projected = (story_days['Date'] >= today) & (story_days['End Date (Actual)'].isna())
 
         fig = sp.make_subplots(
             rows=3, cols=1,
@@ -59,19 +69,6 @@ class Graphs:
             customdata=custom_data,
             hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]} Points<br>%{customdata[3]|%b %d} (Day %{customdata[4]})<br>%{customdata[5]:.0%}<extra></extra>",
         ), row=1, col=1)
-        # Today line:
-        fig.add_shape(
-            type='line',
-            xref="x",
-            yref="y",
-            x0=today,
-            x1=today,
-            y0=total_scope,
-            y1=0,
-            line=dict(width=1, color='steelblue', dash='dash'),
-            row=1,
-            col=1
-        )
 
         # Throughput:
         custom_data=stories[['ID', 'Summary', 'Size', 'End Date (Actual or Current Estimated)', 'Story Days (Actual or Current Estimated)', 'Relative Cycle Time (Estimated)']]
