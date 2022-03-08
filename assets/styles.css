@@ -1,0 +1,25 @@
+.rc-slider-track {
+    background-color: steelblue;
+}
+
+.rc-slider-dot-active {  
+        border-color: steelblue;
+border: solid 2px steelblue;
+}
+
+.rc-slider-handle {
+        background-color: steelblue;
+border-color: steelblue;
+}
+
+.rc-slider-handle:hover {
+    border-color: steelblue;
+}
+
+.rc-slider-handle-active:active {
+    border-color: steelblue;
+}
+
+#my-range-slider {
+    padding-bottom: 65px !important;
+}
