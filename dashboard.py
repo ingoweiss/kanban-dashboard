@@ -17,21 +17,12 @@ server = app.server
 
 conf = Config.instance()
 stories = Dat.stories(conf.today).reset_index()
-epoch = pd.to_datetime('1970-01-01')
-
-# Dates:
-project_start_date = stories['Start Date'].min()
-project_end_date = stories['End Date (Actual or Current Estimated)'].max()
-project_dates = pd.date_range(project_start_date, project_end_date, freq='D')
-project_working_dates = pd.date_range(project_start_date, project_end_date, freq=conf.offset)
-project_nonworking_dates = [d for d in project_dates if d not in project_working_dates]
 
 # Range Slider:
-monday_before_project_start_date = project_start_date - datetime.timedelta(days=project_start_date.weekday())
-monday_after_project_end_date = project_end_date + datetime.timedelta(days=((7 - project_end_date.weekday())%7))
+epoch = pd.to_datetime('1970-01-01')
 range = pd.date_range(
-    start=monday_before_project_start_date,
-    end=monday_after_project_end_date,
+    start=Dat.monday_before_start_date(),
+    end=Dat.monday_after_end_date(),
     freq='W-MON'
 )
 style = {

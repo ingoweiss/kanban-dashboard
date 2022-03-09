@@ -2,7 +2,7 @@ import pdb
 import pandas as pd
 import numpy as np
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import cache
 
 from config import Config
@@ -13,13 +13,67 @@ class Data:
 
     @classmethod
     @cache
+    def stories_raw(cls):
+
+        stories_raw = pd.read_json(Data._data_dir + '/stories.json', dtype={'size': 'int64', 'start_date': 'datetime64[D]', 'end_date': 'datetime64[D]'})\
+            .rename(columns={
+                'id': 'ID',
+                'summary': 'Summary',
+                'size': 'Size',
+                'start_date': 'Start Date',
+                'end_date': 'End Date (Actual)'
+            })\
+            .set_index('ID')\
+            .sort_values(['End Date (Actual)', 'Start Date'], ascending=[True, True])
+
+        return stories_raw
+
+    @classmethod
+    @cache
+    def start_date(cls):
+        stories = cls.stories_raw()
+        return stories['Start Date'].min()
+
+    @classmethod
+    @cache
+    def monday_before_start_date(cls):
+        return cls.start_date() - timedelta(days=cls.start_date().weekday())
+
+    @classmethod
+    @cache
+    def end_date(cls):
+        conf = Config.instance()
+        stories = cls.stories(conf.today)
+        return stories['End Date (Actual or Current Estimated)'].max()
+
+    @classmethod
+    @cache
+    def monday_after_end_date(cls):
+        return cls.end_date() + timedelta(days=((7 - cls.end_date().weekday())%7))
+
+    @classmethod
+    @cache
+    def dates(cls):
+        return pd.date_range(cls.start_date(), cls.end_date(), freq='D')
+
+    @classmethod
+    @cache
+    def working_dates(cls):
+        conf = Config.instance()
+        return pd.date_range(cls.start_date(), cls.end_date(), freq=conf.offset)
+
+    @classmethod
+    @cache
+    def nonworking_dates(cls):
+        conf = Config.instance()
+        return [d for d in cls.dates() if d not in cls.working_dates()]
+
+    @classmethod
+    @cache
     def stories(cls, today):
 
         conf = Config.instance()
-        stories = pd.read_json(Data._data_dir + '/stories.json', dtype={'size': 'int64', 'start_date': 'datetime64[D]', 'end_date': 'datetime64[D]'})\
-                    .rename(columns={'id': 'ID', 'summary': 'Summary', 'size': 'Size', 'start_date': 'Start Date', 'end_date': 'End Date (Actual)'})\
-                    .set_index('ID')\
-                    .sort_values(['End Date (Actual)', 'Start Date'], ascending=[True, True])
+        stories = cls.stories_raw()
 
         completed = stories['End Date (Actual)'].notna()
         started = stories['Start Date'].notna()

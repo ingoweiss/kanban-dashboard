@@ -28,13 +28,6 @@ class Graphs:
         stories_by_end_date_estimated = Dat.stories_by_end_date(today, ma_windows, 'estimated')[last_business_day:]
         wip = Dat.wip(today)
 
-        # Dates:
-        project_start_date = stories['Start Date'].min()
-        project_end_date = stories['End Date (Actual or Current Estimated)'].max()
-        project_dates = pd.date_range(project_start_date, project_end_date, freq='D')
-        project_working_dates = pd.date_range(project_start_date, project_end_date, freq=conf.offset)
-        project_nonworking_dates = [d for d in project_dates if d not in project_working_dates]
-
         # Narrow to date range if provided:
         if (start_date and end_date):
             story_days = story_days.loc[(story_days['Date'] >= start_date) & (story_days['Date'] <= end_date)]
@@ -182,9 +175,9 @@ class Graphs:
         )
         fig.update_xaxes(dict(
             rangebreaks=[
-                dict(values=project_nonworking_dates)
+                dict(values=Dat.nonworking_dates())
             ],
-            tick0=project_start_date - datetime.timedelta(days=project_start_date.weekday()),
+            tick0=Dat.monday_before_start_date(),
             dtick=(7*24*60*60*1000),
             ticks='outside',
             showticklabels=True
