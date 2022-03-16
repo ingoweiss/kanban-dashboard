@@ -119,7 +119,7 @@ class Graphs:
             mode='lines+markers',
             line=dict(
                 color='steelblue',
-                shape='hv'
+                shape='vh'
             ),
             hovertemplate="%{x|%b %d}: %{y}<extra></extra>"
         ), row=3, col=1)
@@ -130,7 +130,7 @@ class Graphs:
             mode='lines+markers',
             line=dict(
                 color='steelblue',
-                shape='hv'
+                shape='vh'
             ),
             opacity=0.2,
             hovertemplate="%{x|%b %d}: %{y}<extra></extra>"
@@ -182,6 +182,7 @@ class Graphs:
             ticks='outside',
             showticklabels=True
         ))
+        fig.update_yaxes(rangemode="tozero")
         graph = dcc.Graph(
             id='burndown-chart',
             figure=fig,
