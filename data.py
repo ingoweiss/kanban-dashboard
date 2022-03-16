@@ -152,17 +152,23 @@ class Data:
     @cache
     def stories_by_end_date(cls, today, ma_windows=[], mode='actual'):
 
+        conf = Config.instance()
         stories = cls.stories(today)
         stories['Stories'] = 1
-        completed = stories['End Date (Actual)'].notna()
+
         if mode == 'actual':
-            stories = stories.loc[completed]
+            end_date_field = 'End Date (Actual)'
+            date_range = pd.date_range(cls.start_date(), conf.today, freq=conf.offset)
+        elif mode == 'estimated':
+            end_date_field = 'End Date (Actual or Current Estimated)'
+            date_range = pd.date_range(cls.start_date(), cls.end_date(), freq=conf.offset)
+
         stories_by_end_date = stories\
-                              .groupby('End Date (Actual or Current Estimated)')\
+                              .groupby(end_date_field)\
                               .sum()\
                               .loc[:, ['Stories', 'Size', 'Story Days (Actual)']]\
-                              .resample(Config.instance().offset, level=0)\
-                              .sum()
+                              .reindex(date_range, fill_value=0)
+
         for window in ma_windows:
             stories_by_end_date['{}-Day Stories'.format(str(window))] = stories_by_end_date['Stories'].rolling(window).sum()
             stories_by_end_date['{}-Day Size'.format(str(window))] = stories_by_end_date['Size'].rolling(window).sum()

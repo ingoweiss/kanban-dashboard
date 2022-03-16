@@ -1,3 +1,12 @@
+# +--------+------+-------+-------+-------+-------+-------+-------+--------+--------+---------+--------+--------+--------+--------+--------+--------+--------+----------------+
+# |   ID   | Size | May 4 | May 5 | May 6 | May 7 | May 8 | May 9 | May 10 | May 11 | May 12  | May 13 | May 14 | May 15 | May 16 | May 17 | May 18 | May 19 | May 20 (today) |
+# +--------+------+-------+-------+-------+-------+-------+-------+--------+--------+---------+--------+--------+--------+--------+--------+--------+--------+----------------+
+# | -      |    - | Tue   | Wed   | Thu   | Fri   | Sat   | Sun   | Mon    | Tue    | Wed     | Thu    | Fri    | Sat    | Sun    | Mon    | Tue    | Wed    | Thu            |
+# | US5000 |    5 | 1     | 2     | 3     | 4     | -     | -     | 5      | 6      | 7 (end) |        |        | -      | -      |        |        |        |                |
+# | US5001 |    5 |       |       |       |       |       |       |        |        |         |        |        |        |        |        | 1      | 2      | 3              |
+# | US5002 |    5 |       |       |       | 1     |       |       | 2      | 3      | 4       | 5      | 6      |        |        | 7      | 8      | 9      | 10             |
+# +--------+------+-------+-------+-------+-------+-------+-------+--------+--------+---------+--------+--------+--------+--------+--------+--------+--------+----------------+
+
 import pytest
 import pdb
 
@@ -37,3 +46,9 @@ def test_in_flight_overdue():
     assert story['Story Days (Actual or Current Estimated)'] == 10
     assert story['Story Days (Median)'] == 7
     assert story['End Date (Actual or Current Estimated)'].strftime('%Y-%m-%d') == '2020-05-20'
+
+def test_stories_by_end_date_actual():
+    today = Config.instance().today
+    stories = Data.stories_by_end_date(today, ma_windows=tuple([3,10]), mode='actual')
+
+    assert stories.loc[today, 'Stories'] == 0
