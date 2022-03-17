@@ -18,6 +18,10 @@ class Config:
         self.calendar = ProjectCalendar()
         self.offset = pd.offsets.CDay(calendar=self.calendar)
         self.forecast_mode = self._data['forecast_mode']
+        if 'date_range_slider_ticks' in self._data.keys():
+            self.date_range_slider_ticks = self._data['date_range_slider_ticks']
+        else:
+            self.date_range_slider_ticks = 'months'
 
     @classmethod
     def instance(cls):

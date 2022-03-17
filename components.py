@@ -2,6 +2,7 @@ from dash import dcc
 import pandas as pd
 
 from data import Data as Dat
+from config import Config
 
 class Components:
 
@@ -9,11 +10,21 @@ class Components:
     def date_range_slider(cls):
 
         epoch = pd.to_datetime('1970-01-01')
-        range = pd.date_range(
-            start=Dat.monday_before_start_date(),
-            end=Dat.monday_after_end_date(),
-            freq='W-MON'
-        )
+        conf = Config.instance()
+        ticks = conf.date_range_slider_ticks
+
+        if ticks == 'months':
+            range = pd.date_range(
+                start=Dat.first_of_start_month(),
+                end=Dat.first_of_month_after_end_month(),
+                freq='MS'
+            )
+        elif ticks == 'weeks':
+            range = pd.date_range(
+                start=Dat.monday_before_start_date(),
+                end=Dat.monday_after_end_date(),
+                freq='W-MON'
+            )
         style = {
             'font-family': '"Open Sans", verdana, arial, sans-serif',
             'font-size': '.75rem',

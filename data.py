@@ -41,6 +41,11 @@ class Data:
 
     @classmethod
     @cache
+    def first_of_start_month(cls):
+        return cls.start_date().replace(day=1)
+
+    @classmethod
+    @cache
     def end_date(cls):
         conf = Config.instance()
         stories = cls.stories(conf.today)
@@ -50,6 +55,11 @@ class Data:
     @cache
     def monday_after_end_date(cls):
         return cls.end_date() + timedelta(days=((7 - cls.end_date().weekday())%7))
+
+    @classmethod
+    @cache
+    def first_of_month_after_end_month(cls):
+        return cls.end_date() + pd.offsets.MonthBegin()
 
     @classmethod
     @cache
