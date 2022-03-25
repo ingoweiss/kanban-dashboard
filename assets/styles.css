@@ -23,3 +23,20 @@
 #my-range-slider {
     padding-bottom: 65px !important;
 }
+
+#collapse-button {
+    float: right
+}
+
+#date-range {
+    float: left
+}
+
+#collapse {
+    transition: transform;
+}
+
+.btn:focus,.btn:active {
+    outline: none !important;
+    box-shadow: none;
+ }
