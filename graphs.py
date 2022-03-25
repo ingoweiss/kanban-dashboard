@@ -182,7 +182,8 @@ class Graphs:
             ticks='outside',
             showticklabels=True
         ))
-        fig.update_yaxes(rangemode="tozero")
+        fig.update_yaxes(rangemode="tozero", col=1, row=2)
+        fig.update_yaxes(rangemode="tozero", col=1, row=3)
         graph = dcc.Graph(
             id='burndown-chart',
             figure=fig,
