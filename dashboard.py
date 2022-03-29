@@ -53,7 +53,9 @@ def update_output(range):
 def update_selected_range(range):
     epoch = pd.to_datetime('1970-01-01')
     start_date, end_date = [(epoch + datetime.timedelta(days=n)) for n in range]
-    if start_date.year == end_date.year:
+    if end_date == Dat.first_of_month_after_end_month():
+        return "{} — {}".format(start_date.strftime("%b %-d, %Y"), "Present")
+    elif start_date.year == end_date.year:
         return "{} — {}".format(start_date.strftime("%b %-d"), end_date.strftime("%b %-d, %Y"))
     else:
         return "{} — {}".format(start_date.strftime("%b %-d, %Y"), end_date.strftime("%b %-d, %Y"))
