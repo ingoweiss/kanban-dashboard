@@ -111,11 +111,11 @@ class Data:
 
         # Add estimate of days needed to implement the story, based on either the median or mean story days for the story size (configurable)
         if conf.forecast_mode == 'mean':
-            stories['Story Days (Estimated)'] = stories['Story Days (Mean)']\
+            stories.loc[:, 'Story Days (Estimated)'] = stories['Story Days (Mean)']\
                 .round()\
                 .fillna(stories['Size'])
         else:
-            stories['Story Days (Estimated)'] = stories['Story Days (Median)']\
+            stories.loc[:, 'Story Days (Estimated)'] = stories['Story Days (Median)']\
                 .round()\
                 .fillna(stories['Size'])
 
