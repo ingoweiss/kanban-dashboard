@@ -95,7 +95,7 @@ class Data:
         stories.loc[completed, 'Story Days (Actual)'] = stories.loc[completed].apply(lambda s: len(pd.date_range(s['Start Date'], s['End Date (Actual)'], freq=conf.offset)), axis=1)
 
         # add current story days, whether actual or elapsed:
-        stories['Story Days (Actual or Elapsed)'] = stories['Story Days (Actual)'].combine_first(stories['Story Days (Elapsed)'])
+        stories.loc[:, 'Story Days (Actual or Elapsed)'] = stories['Story Days (Actual)'].combine_first(stories['Story Days (Elapsed)'])
 
        # Compute story days statistics for each story size:
         stats= stories\
@@ -125,11 +125,11 @@ class Data:
         stories.loc[started, 'End Date (Estimated)'] = stories.loc[started].apply(lambda s: s['Start Date'] + pd.offsets.CDay(calendar=conf.calendar, n=s['Story Days (Estimated)']-1), axis=1)
 
         # Add the actual or original estimated end date:
-        stories['End Date (Actual or Estimated)'] = stories['End Date (Actual)'].combine_first(stories['End Date (Estimated)'])
+        stories.loc[:, 'End Date (Actual or Estimated)'] = stories['End Date (Actual)'].combine_first(stories['End Date (Estimated)'])
 
         # Add the actual or current estimated end date as either 'End Date (Actual)' if available or the greater of 'End Date (Estimated)' and today:
-        stories['Today'] = today
-        stories['End Date (Actual or Current Estimated)'] = stories['End Date (Actual)'].combine_first(stories[['End Date (Estimated)', 'Today']].max(axis=1))
+        stories.loc[:, 'Today'] = today
+        stories.loc[:, 'End Date (Actual or Current Estimated)'] = stories['End Date (Actual)'].combine_first(stories[['End Date (Estimated)', 'Today']].max(axis=1))
 
         # Burn up/down calculation requires stories to be sorted by start/end date:
         stories.sort_values(['End Date (Actual or Current Estimated)', 'Start Date'], ascending=[True, True], inplace=True)
@@ -141,7 +141,7 @@ class Data:
         stories.loc[started, 'Burn Up (Estimated)'] = stories['Size'].expanding().sum()#.astype('Int64')
 
         # Add burn-up, using actual if available, otherwise estimated:
-        stories['Burn Up (Actual or Estimated)'] = stories['Burn Up (Actual)'].combine_first(stories['Burn Up (Estimated)'])
+        stories.loc[:, 'Burn Up (Actual or Estimated)'] = stories['Burn Up (Actual)'].combine_first(stories['Burn Up (Estimated)'])
 
         total_scope = stories['Size'].values.sum()
 
@@ -152,7 +152,7 @@ class Data:
         stories.loc[started, 'Burn Down (Estimated)'] = (total_scope - stories['Burn Up (Estimated)'])#.astype('Int64')
 
         # Add burn-down, using actual if available, otherwise estimated:
-        stories['Burn Down (Actual or Estimated)'] = stories['Burn Down (Actual)'].combine_first(stories['Burn Down (Estimated)'])
+        stories.loc[:, 'Burn Down (Actual or Estimated)'] = stories['Burn Down (Actual)'].combine_first(stories['Burn Down (Estimated)'])
 
         # Add 'relative cycle time' as actual story days per estimated story day:
         stories.loc[:, 'Relative Cycle Time'] = stories['Story Days (Actual or Elapsed)'] / stories['Story Days (Estimated)']
@@ -185,12 +185,12 @@ class Data:
                               .reindex(date_range, fill_value=0)
 
         for window in ma_windows:
-            stories_by_end_date['{}-Day Stories'.format(str(window))] = stories_by_end_date['Stories'].rolling(window).sum()
-            stories_by_end_date['{}-Day Size'.format(str(window))] = stories_by_end_date['Size'].rolling(window).sum()
-            stories_by_end_date['{}-Day Story Days (Actual)'.format(str(window))] = stories_by_end_date['Story Days (Actual)'].rolling(window).sum()
+            stories_by_end_date.loc[:, '{}-Day Stories'.format(str(window))] = stories_by_end_date['Stories'].rolling(window).sum()
+            stories_by_end_date.loc[:, '{}-Day Size'.format(str(window))] = stories_by_end_date['Size'].rolling(window).sum()
+            stories_by_end_date.loc[:, '{}-Day Story Days (Actual)'.format(str(window))] = stories_by_end_date['Story Days (Actual)'].rolling(window).sum()
 
-            stories_by_end_date['{}-Day MA Story Cycle Time'.format(str(window))] = stories_by_end_date['{}-Day Story Days (Actual)'.format(str(window))] / stories_by_end_date['{}-Day Stories'.format(str(window))]
-            stories_by_end_date['{}-Day MA Story Point Cycle Time'.format(str(window))] = stories_by_end_date['{}-Day Story Days (Actual)'.format(str(window))] / stories_by_end_date['{}-Day Size'.format(str(window))]
+            stories_by_end_date.loc[:, '{}-Day MA Story Cycle Time'.format(str(window))] = stories_by_end_date['{}-Day Story Days (Actual)'.format(str(window))] / stories_by_end_date['{}-Day Stories'.format(str(window))]
+            stories_by_end_date.loc[:, '{}-Day MA Story Point Cycle Time'.format(str(window))] = stories_by_end_date['{}-Day Story Days (Actual)'.format(str(window))] / stories_by_end_date['{}-Day Size'.format(str(window))]
 
         return stories_by_end_date
 
@@ -210,8 +210,8 @@ class Data:
         story_days = stories.loc[started].explode('Story Days').rename(columns={'Story Days': 'Story Day'})
 
         # populate story day specific fields:
-        story_days['Date'] = story_days.apply(lambda s: s['Start Date'] + pd.offsets.CDay(calendar=conf.calendar, n=s['Story Day']), axis=1)
-        story_days['Completeness (Estimated)'] = ((story_days['Story Day']+1).astype('float64') / story_days['Story Days (Estimated)'].astype('float64')).round(2)
+        story_days.loc[:, 'Date'] = story_days.apply(lambda s: s['Start Date'] + pd.offsets.CDay(calendar=conf.calendar, n=s['Story Day']), axis=1)
+        story_days.loc[:, 'Completeness (Estimated)'] = ((story_days['Story Day']+1).astype('float64') / story_days['Story Days (Estimated)'].astype('float64')).round(2)
 
         return story_days
 
