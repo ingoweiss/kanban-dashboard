@@ -23,8 +23,7 @@ class Data:
                 'start_date': 'Start Date',
                 'end_date': 'End Date (Actual)'
             })\
-            .set_index('ID')\
-            .sort_values(['End Date (Actual)', 'Start Date'], ascending=[True, True])
+            .set_index('ID')
 
         return stories_raw
 
@@ -125,9 +124,15 @@ class Data:
         # For in-flight and completed stories, add the estimated end date based on 'Start Date' and 'Story Days (Estimated)':
         stories.loc[started, 'End Date (Estimated)'] = stories.loc[started].apply(lambda s: s['Start Date'] + pd.offsets.CDay(calendar=conf.calendar, n=s['Story Days (Estimated)']-1), axis=1)
 
+        # Add the actual or original estimated end date:
+        stories['End Date (Actual or Estimated)'] = stories['End Date (Actual)'].combine_first(stories['End Date (Estimated)'])
+
         # Add the actual or current estimated end date as either 'End Date (Actual)' if available or the greater of 'End Date (Estimated)' and today:
         stories['Today'] = today
         stories['End Date (Actual or Current Estimated)'] = stories['End Date (Actual)'].combine_first(stories[['End Date (Estimated)', 'Today']].max(axis=1))
+
+        # Burn up/down calculation requires stories to be sorted by start/end date:
+        stories.sort_values(['End Date (Actual or Current Estimated)', 'Start Date'], ascending=[True, True], inplace=True)
 
         # For completed stories, add the actual cumulative burn-up in terms of story size:
         stories.loc[completed, 'Burn Up (Actual)'] = stories['Size'].expanding().sum()#.astype('Int64')
